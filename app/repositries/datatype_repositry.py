@@ -1,0 +1,38 @@
+
+from app.models.datatype import Datatype
+from app.extensions import db
+from app.repositries.base_repositry import BaseRepositry
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import func
+
+class DatatypeRepositry(BaseRepositry):
+    
+    def get_by_id(self, id):
+        return Datatype.query.get(id)
+
+    def get_by_name(self, name: str):
+        return Datatype.query.filter_by(func.lower(Datatype.dataTypeName)==name.lower()).first() #make it not case sensative so that Int = int returns both in db
+    
+    def get_all(self):
+        return Datatype.query.all()
+
+    def create(self, data):
+        
+        flags_data = {k: data.pop(k) for k in Datatype.schema.keys() if k in data}
+        dt = Datatype(**data)
+        dt.set_flags(flags_data)
+        db.session.add(dt)
+        db.session.commit()
+        return dt
+
+    def update(self, id, data):
+        dt = self.get_by_id(id)
+        if not dt:
+            return None
+        for key, value in data.items():
+            setattr(dt, key, value)
+        db.session.commit()
+        return dt
+
+    def delete(self, obj):
+        db.session.delete(obj)

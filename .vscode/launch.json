@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FastAPI: Uvicorn",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "run:app", // Replace 'main:app' with your actual module and FastAPI app instance
+                "--reload",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000" // Adjust port as needed
+            ],
+            "envFile": "${workspaceFolder}/.env", // Optional: if you use a .env file
+            "console": "integratedTerminal"
+        }
+    ]
+}
