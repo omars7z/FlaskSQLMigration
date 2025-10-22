@@ -9,7 +9,7 @@ class Datatype(Flag, db.Model):
     schema = {
         "canDoMathOperation": False,  # 1
         "canDoLogicalOperation": True,  # 2
-        "isIterable": False,  # 4
+        "isIterable": False  # 4
     }
 
     id = db.Column(sa.Integer, primary_key=True)
@@ -18,7 +18,15 @@ class Datatype(Flag, db.Model):
     example = db.Column(sa.JSON)
     flag = db.Column(sa.Integer, default=0)
 
+    def __init__(self, name: str, example=None, time_created=None, flags: dict = None, **kwargs):
+        # Initialize Flag with the dict
+        super().__init__(flags=flags, schema=self.schema)
+        self.name = name
+        self.example = example
+        self.time_created = time_created or datetime.now()
+
     def set_flags(self, flags_dict: dict):
+        """Apply a dictionary of flag values to the integer flag field."""
         flag_util = Flag(flags_dict, schema=self.schema)
         self.flag = flag_util.get_flag()
 
