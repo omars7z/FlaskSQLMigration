@@ -10,15 +10,18 @@ class DatatypeRepositry(BaseRepositry):
     def get_by_id(self, id):
         return Datatype.query.get(id)
 
+    from sqlalchemy import func
+
     def get_by_name(self, name: str):
-        return Datatype.query.filter_by(func.lower(Datatype.dataTypeName)==name.lower()).first() #make it not case sensative so that Int = int returns both in db
+        return Datatype.query.filter(func.lower(Datatype.name) == name.lower()).first()
+
     
     def get_all(self):
         return Datatype.query.all()
 
-    def create(self, data):
-        
+    def create(self, data: dict):
         flags_data = {k: data.pop(k) for k in Datatype.schema.keys() if k in data}
+
         dt = Datatype(**data)
         dt.set_flags(flags_data)
         db.session.add(dt)

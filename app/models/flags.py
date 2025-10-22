@@ -1,12 +1,9 @@
-
 class Flag:
-    DEFAULT_FLAGS = {}  # class-level default schema
+    DEFAULT_FLAGS = {}
 
     def __init__(self, flags: int | dict = None, schema: dict = None):
-        # Use the schema from subclass or argument
         if schema is not None:
             self.DEFAULT_FLAGS = schema
-        # Initialize the flag integer
         if flags is None:
             self.flag = 0
         elif isinstance(flags, int):
