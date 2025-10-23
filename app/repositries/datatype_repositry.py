@@ -10,8 +10,6 @@ class DatatypeRepositry(BaseRepositry):
     def get_by_id(self, id):
         return Datatype.query.get(id)
 
-    from sqlalchemy import func
-
     def get_by_name(self, name: str):
         return Datatype.query.filter(func.lower(Datatype.name) == name.lower()).first()
 

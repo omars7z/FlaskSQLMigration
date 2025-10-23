@@ -6,7 +6,7 @@ class BitwiseMixin:
     FLAG_CLASS = DatatypeFlag  # Override in subclass if needed
     FLAG_FIELD = "flag"        # Name of the integer column in the model
 
-    # --- Flag utility methods ---
+    # flag utilities methods
 
     def _get_flag_value(self) -> int:
         return getattr(self, self.FLAG_FIELD, 0) or 0

@@ -3,9 +3,9 @@ from app.models.flags import Flag
 class DatatypeFlag(Flag):
     
     DEFAULT_FLAGS = {
-        "canDoMathOperation": bool,
-        "canDoLogicalOperation": bool,
-        "isIterable": bool
+        # "canDoMathOperation": bool,
+        # "canDoLogicalOperation": bool,
+        # "isIterable": bool
     }
     
     

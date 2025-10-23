@@ -30,10 +30,9 @@ class DatatypeResource(Resource):
         return suc_res(dt.to_dict(), 201)
     
        
+    # @validate_json(Datatype.schema)
     def put(self, datatype_id):
         data = request.get_json()
-        if not data:
-            return error_res("Invalid JSON", 400)
         dt = self.service.update(datatype_id, data)
         if not dt:
             return error_res("Datatype not found", 404)
