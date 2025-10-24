@@ -1,10 +1,10 @@
-from app.models.datatypeflags import DatatypeFlag
+'''from app.models.datatypeflags import DatatypeFlag
 
 class BitwiseMixin:
     """Reusable mixin for models that use a bitwise flag column."""
 
-    FLAG_CLASS = DatatypeFlag  # Override in subclass if needed
-    FLAG_FIELD = "flag"        # Name of the integer column in the model
+    FLAG_CLASS = DatatypeFlag  #override in subclass if needed
+    FLAG_FIELD = "flag"        # name of integer column in the model
 
     # flag utilities methods
 
@@ -53,3 +53,4 @@ class BitwiseMixin:
         flags.set_permissions(updates)
         self._set_flag_value(flags.get_flag())
         return self
+'''

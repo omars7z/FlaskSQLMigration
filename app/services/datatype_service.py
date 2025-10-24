@@ -1,6 +1,8 @@
 from app.models.flags import Flag
+from app.services.registry import register
 
-class DatatypeService():
+@register("Datatype")
+class DatatypeService:
     
     def __init__(self, repository):
         self.repo = repository
@@ -17,17 +19,7 @@ class DatatypeService():
     def create(self, data: dict):
         return self.repo.create(data)
 
-        # Flag({ can_delete: data.can_delete }) ... permissions 
-        # flag_fields = {k: data[k] for k in data if k in Flag.DEFAULT_FLAGS}
-        
-        # flag_obj = Flag(flag_fields)
-        # data["flag"] = flag_obj.get_flag()
-        
-        # for key in flag_fields.keys():
-        #     data.pop(key)
-        
     
-
     def update(self, id, data: dict):
         dt = self.get_by_id(id)
         if not dt:
@@ -43,6 +35,4 @@ class DatatypeService():
 
 
     def delete(self, dt):
-        if not dt.can_delete:
-            raise ValueError(f"Cannot delete datatype '{dt.name}' due to flag restriction")
         self.repo.delete(dt)

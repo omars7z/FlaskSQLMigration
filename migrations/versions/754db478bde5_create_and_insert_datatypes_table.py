@@ -16,7 +16,7 @@ from app.models.datatype import Datatype
 
 # revision identifiers, used by Alembic.
 revision: str = '754db478bde5'
-down_revision: Union[str, Sequence[str], None] = '2306652354f6'
+down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

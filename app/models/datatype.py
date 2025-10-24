@@ -11,24 +11,21 @@ class Datatype(Flag, db.Model):
         "canDoLogicalOperation": True,  # 2
         "isIterable": False  # 4
     }
-
+    
     id = db.Column(sa.Integer, primary_key=True)
     name = db.Column(sa.String(50), unique=True, nullable=False)
     time_created = db.Column(sa.DateTime, default=datetime.now)
     example = db.Column(sa.JSON)
     flag = db.Column(sa.Integer, default=0)
 
-    def __init__(self, name: str, example=None, time_created=None, flags: dict = None, **kwargs):
+    def __init__(self, request_param: dict):
         # ini flag with the dict
+        name, example, flags = request_param.values()
         super().__init__(flags=flags, schema=self.schema)
         self.name = name
         self.example = example
-        self.time_created = time_created or datetime.now()
+        self.time_created = datetime.now()
 
-    def set_flags(self, flags_dict: dict):
-        """ dict of flag values to the integer flag """
-        flag_util = Flag(flags_dict, schema=self.schema)
-        self.flag = flag_util.get_flag()
 
     def to_dict(self):
         cr_flag = Flag(self.flag, schema=self.schema).to_dict()

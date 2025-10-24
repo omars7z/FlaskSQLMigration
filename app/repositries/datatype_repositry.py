@@ -19,9 +19,9 @@ class DatatypeRepositry(BaseRepositry):
 
     def create(self, data: dict):
         flags_data = {k: data.pop(k) for k in Datatype.schema.keys() if k in data}
-
-        dt = Datatype(**data)
-        dt.set_flags(flags_data)
+        data['flags'] = flags_data
+        dt = Datatype(data)
+        # dt.set_flags(flags_data)
         db.session.add(dt)
         db.session.commit()
         return dt
@@ -37,3 +37,5 @@ class DatatypeRepositry(BaseRepositry):
 
     def delete(self, obj):
         db.session.delete(obj)
+        db.session.commit()
+        

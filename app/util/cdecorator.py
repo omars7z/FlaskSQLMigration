@@ -2,12 +2,7 @@ from functools import wraps
 from flask import request
 from .response import error_res, suc_res
 
-# datatype_schema = {
-#     "datatypename": int,
-#     "canDoMathOperation": bool,
-#     "canDoLogicalOperation": bool,
-#     "isIterable": bool
-# }
+#if body has error return bad request 
 
 
 def validate_json(schema:dict = None):
@@ -38,8 +33,8 @@ def validate_json(schema:dict = None):
                         errors.append(f"field {field} is wrong datatype, it shoudl be {field_type.__name__}")
                     
             
-            if "name" in dt and len(str(dt["name"]))>50:
-                errors.append("Field 'name' must not exceed 50 characters")
+            # if "name" in dt and len(str(dt["name"]))>50:
+            #     errors.append("Field 'name' must not exceed 50 characters")
             
             if errors:
                 return error_res("; ".join(errors), 400)
