@@ -12,34 +12,32 @@ class DatatypeResource(Resource):
     @property
     def service(self):
         return current_app.datatype_service
-
-    def get_list(self):
-        dts = self.service.get_all()
-        if not dts:
-            return error_res("Datatype not found", 404)
-        return suc_res([dt.to_dict() for dt in dts])
     
-    # @app.route('/<id>', methods=['GET'])
-    def get_by_id(self, id):
-        dt = self.service.get_by_id(id)
-        if not dt:
-            return error_res("Datatype not found", 404)
-        return suc_res(dt.to_dict())
-    
-    def get_by_name(self, datatype_name):
-        dt = self.service.get_by_name(datatype_name)
-        if not dt:
-            return error_res(f"Datatype '{datatype_name}' not found", 404)
-        return suc_res(dt.to_dict())
+    def get(self):
+        """GET datatypes by id, name, or all."""
+        id = request.args.get("id", type=int)
+        name = request.args.get("name")
+        case_sens = request.args.get("case_sens", "true").lower() == "true"
 
-    def get(self, id=None, name=None):
         if id:
-            return self.get_by_id(id)
+            dt = self.service.get_by_id(id)
+            if not dt:
+                return error_res(f"Datatype with id={id} not found", 404)
+            return suc_res(dt.to_dict())
+
         elif name:
-            return self.get_by_name(name)
+            dt = self.service.get_by_name(name, case_sens)
+            if not dt:
+                return error_res(f"Datatype with name='{name}' not found", 404)
+            return suc_res(dt.to_dict())
+
         else:
-            return self.get_list()
-        
+            dts = self.service.get_all()
+            if not dts:
+                return error_res("No datatypes found", 404)
+            return suc_res([dt.to_dict() for dt in dts])
+    
+    
     # @validate_json(Datatype)
     def post(self):
         data = request.get_json()
@@ -71,8 +69,9 @@ class DatatypeResource(Resource):
         return {"success": True, "msg": f"Deleted datatype '{dt.name}'"}
 
 
-   
-api.add_resource(DatatypeResource, '/datatype', 
-                 '/datatype/<int:id>',
-                 '/datatype/<string:name>' 
-                ) 
+api.add_resource(DatatypeResource, '/datatype') 
+                  
+# api.add_resource(DatatypeResource, '/datatype', 
+#                  '/datatype/<int:id>',
+#                  '/datatype/<string:name>' 
+#                 ) 
