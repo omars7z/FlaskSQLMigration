@@ -5,9 +5,9 @@ from .response import error_res, suc_res
 #if body has error return bad request 
 
 
-def validate_json(schema:dict = None):
+def validate_json(flags_map:dict = None):
     
-    schema = schema or {}
+    flags_map = flags_map or {}
     
     def decorator(f):
         @wraps(f)
@@ -18,7 +18,7 @@ def validate_json(schema:dict = None):
             
             errors = []
             
-            for field, field_type in schema.items():
+            for field, field_type in flags_map.items():
                 if field not in dt:
                     errors.append(f"no field added to {field}")
                 if field_type == bool and isinstance(field, str):

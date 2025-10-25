@@ -49,8 +49,11 @@ class DatatypeResource(Resource):
         return suc_res(dt.to_dict(), 201)
     
        
-    # @validate_json(Datatype.schema)
-    def put(self, id):
+    # @validate_json(Datatype.flags_map)
+    def put(self):
+        id = request.args.get("id", type=int)
+        if not id:
+            return error_res("Missing id", 400)
         data = request.get_json()
         dt = self.service.update(id, data)
         if not dt:
@@ -58,7 +61,10 @@ class DatatypeResource(Resource):
         return suc_res(dt.to_dict())
 
 
-    def delete(self, id):
+    def delete(self):
+        id = request.args.get("id", type=int)
+        if not id:
+            return error_res("Missing id, 404")
         dt = self.service.get_by_id(id)
         if not dt:
             return {"success": False, "msg": "Datatype not found"}

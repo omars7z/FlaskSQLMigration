@@ -11,7 +11,6 @@ from alembic import op
 from sqlalchemy.orm import Session
 import sqlalchemy as sa
 from datetime import datetime
-from app.models.flags import Flag
 from app.models.datatype import Datatype
 
 # revision identifiers, used by Alembic.
@@ -46,7 +45,7 @@ def upgrade() -> None:
         )
 
         def get_flag(flags_dict):
-            return Flag(Datatype.schema, flags_dict).get_flag()
+            return Datatype(Datatype.flags_map, flags_dict).get_flag()
         
         session.execute(
             datatypes_table.insert(),
