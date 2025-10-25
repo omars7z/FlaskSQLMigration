@@ -7,7 +7,7 @@ class DatatypeService:
     def __init__(self, repository):
         self.repo = repository
              
-    def get_by_id(self, id):
+    def get_by_id(self, id:int):
         return self.repo.get_by_id(id)
     
     def get_by_name(self, name: str):
@@ -22,17 +22,12 @@ class DatatypeService:
     
     def update(self, id, data: dict):
         dt = self.get_by_id(id)
-        if not dt:
-            return None
-        flag_fields = {k: data[k] for k in data if k in Flag.DEFAULT_FLAGS}
-        if flag_fields:
-            flag_obj = Flag(flag_fields)
-            data["flag"] = flag_obj.get_flag()
-            #rmove flag fields from data before updating
-            for k in flag_fields.keys():
-                data.pop(k)
+        print(dt)
+        
         return self.repo.update(id, data)  
 
 
     def delete(self, dt):
+        if Flag().get_flag() == 1:
+            raise ValueError("cant delete default flag")
         self.repo.delete(dt)

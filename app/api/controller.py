@@ -20,8 +20,8 @@ class DatatypeResource(Resource):
         return suc_res([dt.to_dict() for dt in dts])
     
     # @app.route('/<id>', methods=['GET'])
-    def get_by_id(self, datatype_id):
-        dt = self.service.get_by_id(datatype_id)
+    def get_by_id(self, id):
+        dt = self.service.get_by_id(id)
         if not dt:
             return error_res("Datatype not found", 404)
         return suc_res(dt.to_dict())
@@ -52,9 +52,9 @@ class DatatypeResource(Resource):
     
        
     # @validate_json(Datatype.schema)
-    def put(self, datatype_id):
+    def put(self, id):
         data = request.get_json()
-        dt = self.service.update(datatype_id, data)
+        dt = self.service.update(id, data)
         if not dt:
             return error_res("Datatype not found", 404)
         return suc_res(dt.to_dict())

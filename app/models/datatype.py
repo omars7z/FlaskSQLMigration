@@ -6,6 +6,7 @@ from app.models.flags import Flag
 class Datatype(Flag, db.Model):
     __tablename__ = "datatypes"
 
+    # flags_map = {}
     schema = {
         "canDoMathOperation": False,  # 1
         "canDoLogicalOperation": True,  # 2
@@ -17,6 +18,7 @@ class Datatype(Flag, db.Model):
     time_created = db.Column(sa.DateTime, default=datetime.now)
     example = db.Column(sa.JSON)
     flag = db.Column(sa.Integer, default=0)
+    is_deleted = db.Column(sa.Boolean, nullable=True, default=False)
 
     def __init__(self, request_param: dict):
         # ini flag with the dict
@@ -36,4 +38,5 @@ class Datatype(Flag, db.Model):
             "time_created": self.time_created.isoformat() if self.time_created else None,
             "flag": self.flag,
             "flags_map": cr_flag,
+            "is_deleted": self.is_deleted
         }

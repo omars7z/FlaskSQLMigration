@@ -1,10 +1,12 @@
 service_registry = {}
-
+# service_registry = {'Datatype': <class 'app.services.datatype_service.DatatypeService'>},
+# name = 'Datatype'
 def register(name: str):
     def wrapper(cls):
         service_registry[name] = cls
         return cls
     return wrapper
+
 
 def init_services(app, repositories: dict):
     for name, ServiceClass in service_registry.items():
