@@ -30,10 +30,10 @@ class DatatypeResource(Resource):
             return suc_res(dt.to_dict())
 
         elif name:
-            dt = self.service.get_by_name(name, case_sens)
-            if not dt:
+            dts = self.service.get_by_name(name, case_sens)
+            if not dts:
                 return error_res(f"Datatype with name='{name}' not found", 404)
-            return suc_res(dt.to_dict())
+            return suc_res([dt.to_dict() for dt in dts])
 
         else:
             dts = self.service.get_all()
@@ -42,6 +42,7 @@ class DatatypeResource(Resource):
             return suc_res([dt.to_dict() for dt in dts])
     
     
+    # @validate_types(Datatype.flags_map)
     @validate_post(Datatype.flags_map)
     def post(self):
         data = request.get_json()
@@ -53,7 +54,6 @@ class DatatypeResource(Resource):
         return suc_res(dt.to_dict(), 201)
     
        
-    # @validate_json(Datatype.flags_map)
     @require_query_param("id", int)
     def put(self):
         data = request.get_json()

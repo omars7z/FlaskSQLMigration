@@ -30,3 +30,4 @@ class BitFlag:
                     self.flag |= (1 << i)
                 else:
                     self.flag &= ~(1 << i)
+        return self.flag

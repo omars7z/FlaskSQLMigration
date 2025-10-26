@@ -1,4 +1,3 @@
-from app.models.datatype import Datatype
 from app.services.registry import register
 
 @register("Datatype")
@@ -18,15 +17,11 @@ class DatatypeService:
 
     def create(self, data: dict):
         return self.repo.create(data)
-
     
     def update(self, id, data: dict):
-        dt = self.get_by_id(id)
-        print(dt)
         return self.repo.update(id, data)  
 
-
     def delete(self, dt):
-        if Datatype().flag_val == 1:
-            raise ValueError("cant delete default flag")
+        if dt.flag_val & 1:
+            raise ValueError("Can't delete this datatype (protected by flag=1)")
         self.repo.delete(dt)

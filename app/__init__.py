@@ -14,10 +14,6 @@ def create_app(config_name):
 
     db.init_app(app)
     
-    '''Create repository instance and Inject repository into service
-    datatype_repo = DatatypeRepositry() 
-    app.datatype_service = DatatypeService(datatype_repo) '''
-    
     repositories = {"Datatype": DatatypeRepositry()}
     init_services(app, repositories)
     

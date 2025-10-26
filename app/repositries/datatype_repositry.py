@@ -13,21 +13,20 @@ class DatatypeRepositry(BaseRepositry):
     def get_by_name(self, name: str, case_sens: bool):
         query = Datatype.query.filter_by(is_deleted=False)
         if case_sens:
-            return query.filter(Datatype.name==name).first()
+            return query.filter(Datatype.name==name).all()
         else:
-            return query.filter(func.lower(Datatype.name)==name.lower()).first()
+            return query.filter(func.lower(Datatype.name)==name.lower()).all()
         
-
     def get_all(self):
         return Datatype.query.filter_by(is_deleted=False).all() 
 
+
     def create(self, data: dict):
         # extract flags from input or use defaults
-        flags_data = {k: data.pop(k, Datatype.flags_map[k]) for k in Datatype.flags_map.keys()}
+        flag_fields = {k: data.pop(k, Datatype.flags_map[k]) for k in Datatype.flags_map.keys()}
         
-        dt = Datatype(**data)  # destructure abd set name, example, etc.
-        dt.set_flags(flags_data)
-
+        dt = Datatype(**data)  # destructure abd set name, example, ...
+        dt.set_flags(flag_fields)
         db.session.add(dt)
         db.session.commit()
         return dt
@@ -43,7 +42,6 @@ class DatatypeRepositry(BaseRepositry):
 
         for key, value in data.items():
             setattr(dt, key, value)
-
         db.session.commit()
         return dt
 

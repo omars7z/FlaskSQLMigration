@@ -1,6 +1,6 @@
 from app import create_app
 from asgiref.wsgi import WsgiToAsgi
-import sys, os
+import os
 
 env = os.getenv("FLASK_ENV")
 

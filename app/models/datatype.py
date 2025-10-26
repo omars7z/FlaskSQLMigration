@@ -7,9 +7,10 @@ class Datatype(db.Model):
     __tablename__ = "datatypes"
 
     flags_map = {
-        "canDoMathOperation": False,
-        "canDoLogicalOperation": True,
-        "isIterable": False
+        "cantBeDeleted": False, #1
+        "canDoMathOperation": False, #2
+        "canDoLogicalOperation": True, #4
+        "isIterable": False #8
     }
 
     id = db.Column(sa.Integer, primary_key=True)
@@ -20,7 +21,7 @@ class Datatype(db.Model):
     is_deleted = db.Column(sa.Boolean, default=False)
 
     @property
-    def flag_obj(self):
+    def flag_obj(self) -> BitFlag:
         return BitFlag(self.flags_map, self.flag)
 
     @property
@@ -31,15 +32,10 @@ class Datatype(db.Model):
     def flag_val(self):
         return self.flag_obj.get_flag()
     
-    def set_flags(self, flags: dict):
-        if self.flag is None:
-            self.flag = 0
-        for i, key in enumerate(self.flags_map.keys()):
-            if key in flags:
-                if flags[key]:
-                    self.flag |= (1 << i)
-                else:
-                    self.flag &= ~(1 << i)
+    def set_flags(self, flag_fields: dict):
+        st = self.flag_obj
+        self.flag = st.set_flags(flag_fields)
+        
                     
     def to_dict(self):
         return {
