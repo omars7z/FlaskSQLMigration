@@ -27,6 +27,6 @@ class DatatypeService:
 
 
     def delete(self, dt):
-        if Datatype().get_flag() == 1:
+        if Datatype().flag_val == 1:
             raise ValueError("cant delete default flag")
         self.repo.delete(dt)

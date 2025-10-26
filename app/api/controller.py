@@ -1,6 +1,10 @@
 from flask import request, current_app
 from flask_restful import Resource
 from sqlalchemy.exc import SQLAlchemyError
+from app.models.datatype import Datatype
+from app.util.type_validator import validate_types
+from app.util.post_validator import validate_post
+from app.util.param_validator import require_query_param
 from app.util.response import suc_res, error_res
 from flask import Blueprint
 from flask_restful import Api   
@@ -14,7 +18,7 @@ class DatatypeResource(Resource):
         return current_app.datatype_service
     
     def get(self):
-        """GET datatypes by id, name, or all."""
+        """GET datatypes by id, name, or list."""
         id = request.args.get("id", type=int)
         name = request.args.get("name")
         case_sens = request.args.get("case_sens", "true").lower() == "true"
@@ -38,7 +42,7 @@ class DatatypeResource(Resource):
             return suc_res([dt.to_dict() for dt in dts])
     
     
-    # @validate_json(Datatype)
+    @validate_post(Datatype.flags_map)
     def post(self):
         data = request.get_json()
         try:
@@ -50,29 +54,24 @@ class DatatypeResource(Resource):
     
        
     # @validate_json(Datatype.flags_map)
+    @require_query_param("id", int)
     def put(self):
-        id = request.args.get("id", type=int)
-        if not id:
-            return error_res("Missing id", 400)
         data = request.get_json()
-        dt = self.service.update(id, data)
+        dt = self.service.update(self._id, data)
         if not dt:
             return error_res("Datatype not found", 404)
         return suc_res(dt.to_dict())
 
-
+    @require_query_param("id", int)
     def delete(self):
-        id = request.args.get("id", type=int)
-        if not id:
-            return error_res("Missing id, 404")
-        dt = self.service.get_by_id(id)
+        dt = self.service.get_by_id(self._id)
         if not dt:
-            return {"success": False, "msg": "Datatype not found"}
+            return error_res("Datatype not found", 404)
         try:
             self.service.delete(dt)
         except ValueError as e:
-            return {"success": False, "msg": str(e)}
-        return {"success": True, "msg": f"Deleted datatype '{dt.name}'"}
+            return error_res(str(e), 400)
+        return suc_res({"msg": f"Deleted datatype '{dt.name}'"})
 
 
 api.add_resource(DatatypeResource, '/datatype') 

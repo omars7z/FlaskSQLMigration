@@ -1,6 +1,7 @@
 from app.extensions import db
 import sqlalchemy as sa
 from datetime import datetime
+from .bitflag import BitFlag
 
 class Datatype(db.Model):
     __tablename__ = "datatypes"
@@ -18,19 +19,18 @@ class Datatype(db.Model):
     flag = db.Column(sa.Integer, default=0)
     is_deleted = db.Column(sa.Boolean, default=False)
 
-    def get_flag(self) -> int:
-        return self.flag
+    @property
+    def flag_obj(self):
+        return BitFlag(self.flags_map, self.flag)
 
-    def to_int(self, flags: dict) -> int:
-        val = 0
-        for i, key in enumerate(self.flags_map.keys()):
-            if flags.get(key, self.flags_map[key]):
-                val |= (1 << i)
-        return val
+    @property
+    def flags_dict(self):
+        return self.flag_obj.to_dict_flags()
 
-    def to_dict_flags(self) -> dict:
-        return {key: bool(self.flag & (1 << i)) for i, key in enumerate(self.flags_map.keys())}
-
+    @property
+    def flag_val(self):
+        return self.flag_obj.get_flag()
+    
     def set_flags(self, flags: dict):
         if self.flag is None:
             self.flag = 0
@@ -40,17 +40,14 @@ class Datatype(db.Model):
                     self.flag |= (1 << i)
                 else:
                     self.flag &= ~(1 << i)
-
+                    
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
             "example": self.example,
-            "time_created": self.time_created.isoformat() if self.time_created else None,
+            "time_created": self.time_created.isoformat(),
             "flag": self.flag,
-            "flags_map": self.to_dict_flags(),
+            "flags_map": self.flags_dict,
             "is_deleted": self.is_deleted
         }
-
-    def __repr__(self):
-            return f"<DatatypeFlag {self.to_dict()} (int={self.flag})>"
