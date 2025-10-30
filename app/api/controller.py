@@ -52,7 +52,7 @@ class DatatypeResource(Resource):
             dt = self.service.update(self._id, data)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(dt.to_dict())
+        return suc_res(dt.to_dict(), 200)
     
 
     @require_query_param("id", int)
@@ -66,7 +66,7 @@ class DatatypeResource(Resource):
             return error_res(str(e), 403)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res({"msg": f"Deleted datatype '{dt.name}'"})
+        return suc_res({"msg": f"Deleted datatype '{dt.name}'"}, 200)
 
 
 api.add_resource(DatatypeResource, '/datatype') 

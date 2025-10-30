@@ -2,7 +2,7 @@
 from app.models.datatype import Datatype
 from app.extensions import db
 from app.repositries.base_repositry import BaseRepositry
-# from sqlalchemy import func
+from sqlalchemy import func
 
 class DatatypeRepositry(BaseRepositry):
     
@@ -14,16 +14,19 @@ class DatatypeRepositry(BaseRepositry):
         
         
     def get(self, filters: dict = None):
-        # case_sens = query_params.pop("case_sens", "true").lower() == "true"
-            # return query.filter(func.lower(Datatype.name)==name.lower()).all()
-
-        query = Datatype.query.filter(Datatype.flag.op('&')(16) == 0) 
+        filters = filters or {}
         flags_keys = list(Datatype.flags_map.keys())
+        query = Datatype.query.filter(Datatype.flag.op('&')(16) == 0)  # skip deleted
 
         for key, val in filters.items():
             if hasattr(Datatype, key):
                 col = getattr(Datatype, key)
-                query = query.filter(col == val)
+
+                if key == "name":
+                    query = query.filter(func.lower(col) == val.lower())
+                else:
+                    query = query.filter(col == val)
+
             elif key in Datatype.flags_map:
                 bit_val = 1 << flags_keys.index(key)
                 if val:
@@ -32,6 +35,7 @@ class DatatypeRepositry(BaseRepositry):
                     query = query.filter((Datatype.flag.op('&')(bit_val)) == 0)
 
         return query.all()
+
             
 
 
