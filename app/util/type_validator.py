@@ -15,7 +15,7 @@ def validate_types(flags_map: dict = None):
 
             errors = []
 
-            # Ensure all flags exist and are booleans
+            # Ensure all flags are booleans
             for field, default in flags_map.items():
                 val = data.get(field, default)
                 if isinstance(val, str):
@@ -31,15 +31,14 @@ def validate_types(flags_map: dict = None):
                 else:
                     data[field] = val
 
-            # Validate name length
+            # validate name length
             name = data.get("name")
-            if name and len(str(name)) > 50:
-                errors.append("Field 'name' must not exceed 50 characters")
+            if name and len(str(name)) > 30:
+                errors.append("Field 'name' must not exceed 30 characters")
 
             if errors:
                 return error_res("; ".join(errors), 400)
 
-            kwargs["dt"] = data
             return f(*args, **kwargs)
 
         return wrapper

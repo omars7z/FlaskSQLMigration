@@ -10,7 +10,8 @@ class Datatype(db.Model):
         "cantBeDeleted": False, #1
         "canDoMathOperation": False, #2
         "canDoLogicalOperation": True, #4
-        "isIterable": False #8
+        "isIterable": False, #8
+        "isDeleted":False, #16
     }
 
     id = db.Column(sa.Integer, primary_key=True)
@@ -18,7 +19,7 @@ class Datatype(db.Model):
     time_created = db.Column(sa.DateTime, default=datetime.now)
     example = db.Column(sa.JSON)
     flag = db.Column(sa.Integer, default=0)
-    is_deleted = db.Column(sa.Boolean, default=False)
+    # is_deleted = db.Column(sa.Boolean, default=False)
 
     @property
     def flag_obj(self) -> BitFlag:
@@ -45,5 +46,4 @@ class Datatype(db.Model):
             "time_created": self.time_created.isoformat(),
             "flag": self.flag,
             "flags_map": self.flags_dict,
-            "is_deleted": self.is_deleted
         }

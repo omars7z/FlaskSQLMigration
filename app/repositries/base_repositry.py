@@ -1,13 +1,9 @@
 from abc import ABC, abstractmethod
 
 class BaseRepositry(ABC):
-    
+        
     @abstractmethod
-    def get_by_id(self, id):
-        pass
-    
-    @abstractmethod
-    def get_all(self):
+    def get(self):
         pass
     
     @abstractmethod

@@ -2,27 +2,41 @@
 from app.models.datatype import Datatype
 from app.extensions import db
 from app.repositries.base_repositry import BaseRepositry
-from sqlalchemy import func
-from datetime import datetime
+# from sqlalchemy import func
 
 class DatatypeRepositry(BaseRepositry):
     
     def get_by_id(self, id):
-        return Datatype.query.filter_by(id=id, is_deleted=False).first()
-
-    def get_by_name(self, name: str, case_sens: bool):
-        query = Datatype.query.filter_by(is_deleted=False)
-        if case_sens:
-            return query.filter(Datatype.name==name).all()
-        else:
-            return query.filter(func.lower(Datatype.name)==name.lower()).all()
+        dt = Datatype.query.filter_by(id=id).first()
+        if dt and dt.flags_dict.get("isDeleted"):
+            return None
+        return dt
         
-    def get_all(self):
-        return Datatype.query.filter_by(is_deleted=False).all() 
+        
+    def get(self, filters: dict = None):
+        # case_sens = query_params.pop("case_sens", "true").lower() == "true"
+            # return query.filter(func.lower(Datatype.name)==name.lower()).all()
+
+        query = Datatype.query.filter(Datatype.flag.op('&')(16) == 0) 
+        flags_keys = list(Datatype.flags_map.keys())
+
+        for key, val in filters.items():
+            if hasattr(Datatype, key):
+                col = getattr(Datatype, key)
+                query = query.filter(col == val)
+            elif key in Datatype.flags_map:
+                bit_val = 1 << flags_keys.index(key)
+                if val:
+                    query = query.filter((Datatype.flag.op('&')(bit_val)) == bit_val)
+                else:
+                    query = query.filter((Datatype.flag.op('&')(bit_val)) == 0)
+
+        return query.all()
+            
 
 
     def create(self, data: dict):
-        # extract flags from input or use defaults
+        # take flags from input or use defaults
         flag_fields = {k: data.pop(k, Datatype.flags_map[k]) for k in Datatype.flags_map.keys()}
         
         dt = Datatype(**data)  # destructure abd set name, example, ...
@@ -47,8 +61,8 @@ class DatatypeRepositry(BaseRepositry):
 
 
     def delete(self, obj):
-        obj.is_deleted = True
-        obj.deleted_at = datetime.now()
         # db.session.delete(obj)
+        obj.set_flags({"isDeleted":True})
         db.session.commit()
+        return obj
         
