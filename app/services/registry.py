@@ -1,6 +1,5 @@
 service_registry = {}
 # service_registry = {'Datatype': <class 'app.services.datatype_service.DatatypeService'>},
-# name = 'Datatype'
 
 #decorator
 def register(name: str): 

@@ -1,3 +1,4 @@
+from flask_restful import Api   
 from flask import request, current_app
 from flask_restful import Resource
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,9 +8,8 @@ from app.util.post_validator import validate_post
 from app.util.filter import auto_filter_method
 from app.util.param_validator import require_query_param
 from app.util.response import suc_res, error_res
-from flask import Blueprint
-from flask_restful import Api   
 
+from flask import Blueprint
 bp = Blueprint("api", __name__, url_prefix="/api")
 api = Api(bp)
 
@@ -53,6 +53,7 @@ class DatatypeResource(Resource):
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict())
+    
 
     @require_query_param("id", int)
     def delete(self):
