@@ -1,5 +1,5 @@
 
-from app.models.datatype import Datatype
+from app.Models.datatype import Datatype
 from pydantic import BaseModel, ValidationError, create_model
 
 @staticmethod

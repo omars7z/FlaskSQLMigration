@@ -1,7 +1,6 @@
 from functools import wraps
 from flask import request
-from app.util.response import error_res
-from app.models.datatype import Datatype
+from app.Util.response import error_res
 
 def auto_filter_method(model):
     def decorator(func):
@@ -14,15 +13,9 @@ def auto_filter_method(model):
             
             for key, val in list(args_dict.items()):
                 if hasattr(model, key):
-                    col = getattr(model, key, 'str')
-                    query = query.filter(getattr(model, key))
-                    py_type = getattr(col.type, 'python_type', str)
-                    if py_type == bool:
-                        val = val.lower() == "true"
-                    else:
-                        val = py_type(val)
+                    query = query.filter(getattr(model, key)==val)
                     filters[key] = val
-
+                    
                 elif key in model.flags_map:
                         filters[key] = val.lower() == "true"
                 else:

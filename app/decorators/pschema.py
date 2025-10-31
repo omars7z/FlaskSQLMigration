@@ -1,9 +1,9 @@
 from functools import wraps
 from flask import request, jsonify
 from pydantic import BaseModel, ValidationError, create_model
-from app.models.datatype import Datatype
-from ..util.pydantic import sqlalchemy_to_pydantic
-from ..util.response import suc_res, error_res
+from app.Models.datatype import Datatype
+from ..Util.pydantic import sqlalchemy_to_pydantic
+from ..Util.response import suc_res, error_res
 
 def validate_schema(sa_model):
     
@@ -20,7 +20,7 @@ def validate_schema(sa_model):
             try:
                 validated_data = pydantic_model(**data)
             except ValidationError as e:
-                return error_res({"success": False, "errors": e.errors()}), 422
+                return {"success": False, "errors": e.errors()}, 422
 
             # Attach validated data to request
             request.validated_data = validated_data.model_dump()

@@ -1,10 +1,10 @@
 from flask import Flask
 from .extensions import db
-from .api.controller import bp as api_bp
-from .services.registry import init_services
+from .api.datatype_controller import bp as api_bp
+from .Services.registry import init_services
 from app.config import get_config
-from app.util.manager import load_repositries
-from .services import datatype_service
+from app.Util.manager import load_repositries
+from .Services import datatype_service
 
 # def create_app():
 def create_app(config_name):

@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request
-from ..util.response import error_res
-from app.models.datatype import Datatype
+from ..Util.response import error_res
+from app.Models.datatype import Datatype
 import re
 
 def validate_post():
