@@ -34,9 +34,7 @@ class DatatypeRepositry(BaseRepositry):
                 else:
                     query = query.filter((Datatype.flag.op('&')(bit_val)) == 0)
 
-        return query.all()
-
-            
+        return query.all()            
 
 
     def create(self, data: dict):
@@ -67,6 +65,7 @@ class DatatypeRepositry(BaseRepositry):
     def delete(self, obj):
         # db.session.delete(obj)
         obj.set_flags({"isDeleted":True})
+        print("DELETEDD this")
         db.session.commit()
         return obj
         

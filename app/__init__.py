@@ -1,11 +1,12 @@
 from flask import Flask
 from .extensions import db
 from .api.controller import bp as api_bp
-from .repositries.datatype_repositry import DatatypeRepositry
 from .services.registry import init_services
 from app.config import get_config
+from app.util.manager import load_repositries
 from .services import datatype_service
 
+# def create_app():
 def create_app(config_name):
     
     app = Flask(__name__)
@@ -14,7 +15,8 @@ def create_app(config_name):
 
     db.init_app(app)
     
-    repositories = {"Datatype": DatatypeRepositry()}
+    '''Repositry -> Service -> Controller'''
+    repositories = load_repositries()
     init_services(app, repositories)
     
     app.register_blueprint(api_bp)

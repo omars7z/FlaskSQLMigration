@@ -25,5 +25,5 @@ class ProductionConfig(Config):
 def get_config():
     if FLASK_ENV == "Development"or"Dev":
         return DevelopmentConfig
-    elif FLASK_ENV == "Production":
+    elif FLASK_ENV == "Production"or"Config":
         return ProductionConfig

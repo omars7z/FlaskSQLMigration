@@ -14,7 +14,7 @@ def auto_filter_method(model):
             
             for key, val in list(args_dict.items()):
                 if hasattr(model, key):
-                    col = getattr(model, key)
+                    col = getattr(model, key, 'str')
                     query = query.filter(getattr(model, key))
                     py_type = getattr(col.type, 'python_type', str)
                     if py_type == bool:
@@ -22,6 +22,7 @@ def auto_filter_method(model):
                     else:
                         val = py_type(val)
                     filters[key] = val
+
                 elif key in model.flags_map:
                         filters[key] = val.lower() == "true"
                 else:

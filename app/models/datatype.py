@@ -2,8 +2,9 @@ from app.extensions import db
 import sqlalchemy as sa
 from datetime import datetime
 from .bitflag import BitFlag
+from pydantic import BaseModel, ValidationError, create_model
 
-class Datatype(db.Model):
+class Datatype(db.Model,): #overide model class 
     __tablename__ = "datatypes"
 
     flags_map = {
@@ -20,6 +21,7 @@ class Datatype(db.Model):
     example = db.Column(sa.JSON)
     flag = db.Column(sa.Integer, default=0)
     # is_deleted = db.Column(sa.Boolean, default=False)
+
 
     @property
     def flag_obj(self) -> BitFlag:

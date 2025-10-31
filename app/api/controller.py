@@ -3,10 +3,10 @@ from flask import request, current_app
 from flask_restful import Resource
 from sqlalchemy.exc import SQLAlchemyError
 from app.models.datatype import Datatype
-from app.util.type_validator import validate_types
-from app.util.post_validator import validate_post
+from app.decorators.pschema import validate_schema
+from app.decorators.pdecorator import validate_post
 from app.util.filter import auto_filter_method
-from app.util.param_validator import require_query_param
+from app.decorators.param_validator import require_query_param
 from app.util.response import suc_res, error_res
 
 from flask import Blueprint
@@ -28,9 +28,9 @@ class DatatypeResource(Resource):
         else:
                 return error_res(f"invalid json request: {data}", 400)
                                  
-                                     
-    @validate_types(Datatype.flags_map)
-    @validate_post(Datatype.flags_map)
+                             
+    @validate_post()
+    @validate_schema(Datatype)
     def post(self):
         data = request.get_json()
         try:
@@ -56,7 +56,7 @@ class DatatypeResource(Resource):
     
 
     @require_query_param("id", int)
-    def delete(self):
+    def delete(self, **args):
         dt = self.service.get_by_id(self._id)
         if not dt:
             return error_res("Datatype not found", 404)
@@ -69,5 +69,5 @@ class DatatypeResource(Resource):
         return suc_res({"msg": f"Deleted datatype '{dt.name}'"}, 200)
 
 
-api.add_resource(DatatypeResource, '/datatype') 
-                  
+api.add_resource(DatatypeResource, '/datatype')
+# api.add_resource(DatatypeResource, '/datatype/<id>')
