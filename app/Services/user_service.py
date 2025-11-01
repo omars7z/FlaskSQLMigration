@@ -1,0 +1,30 @@
+from app.Helpers.registry import register
+from app.Models.user import User
+from app.Util.jwt import create_access_token
+
+@register(User)
+class UserServices:
+    
+    def __init__(self, repositry):
+        self.repo = repositry
+        
+    def get_by_id(self, id):
+        return self.repo.get_by_id(id)
+    
+        
+    def create_user(self, name, email):
+        if not User.to_dict_flags().get("isSuperAdmin"):
+            raise PermissionError("can't create user unless Super Admin")
+        return self.repo.create_user(name, email)
+    
+    
+    def set_password(self, token, password):
+        return self.repo.set_password(token, password)
+    
+    def login(self, email, password):
+        user = self.repo.get_by_email(email)
+        ps = user.check_password(password)
+        if not user or not ps:
+            return None
+        return create_access_token(idntity=user.id)
+    

@@ -49,8 +49,6 @@ def upgrade() -> None:
                 name="system",
                 email="system@system.local",
                 password=generate_password_hash("system_default_pass"),
-                # <algorithm>:<hash function>:<iterations>$<salt>$<derived_key>
-                # pbkdf2:sha256:260000$uGbprVjZ6EbgmFlD$41e5d5fda0f6b28ef0a3cbe56e...
                 token=None,
                 flag=3
             )
@@ -58,8 +56,13 @@ def upgrade() -> None:
 
         # add creator_id to datatypes
         op.add_column(
-            "datatypes",
-            sa.Column("creator_id", sa.Integer(), nullable=True, server_default="1")
+            'datatypes',
+            sa.Column(
+                'creator_id',
+                sa.Integer(),
+                nullable=True,
+                server_default="1"
+            )
         )
         op.create_foreign_key(
             "fk_datatypes_creator_id",
