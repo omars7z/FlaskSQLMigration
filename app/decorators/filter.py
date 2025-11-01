@@ -21,8 +21,8 @@ def auto_filter_method(model):
                 else:
                     return error_res(f"invalide params {key}", 400)
                 
-                
-            return func(resource, filters, *args, **kwargs)
+            kwargs['filters'] = filters
+            return func(resource, *args, **kwargs)
                     
         return wrapper
     return decorator

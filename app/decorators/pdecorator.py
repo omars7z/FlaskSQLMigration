@@ -6,7 +6,7 @@ import re
 
 def validate_post():
     """
-    Validator for POST/PUT request JSON using the Datatype model.
+    Validator for POST request JSON using the Datatype model.
     Pulls name max length and flags dynamically from Datatype.
     """
 

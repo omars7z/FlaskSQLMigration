@@ -1,13 +1,16 @@
 from app.extensions import db
 import sqlalchemy as sa
 from datetime import datetime
-from .bitflag import BitFlag
+from ..Util.base_model import BaseModel2
+from typing import Optional, Dict, Any
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, String, DateTime, JSON
 from pydantic import BaseModel, ValidationError, create_model
 
-class Datatype(db.Model,): #overide model class 
+class Datatype(BaseModel2): #overide model class 
     __tablename__ = "datatypes"
 
-    flags_map = {
+    flags_map : Dict[str, bool]= {
         "cantBeDeleted": False, #1
         "canDoMathOperation": False, #2
         "canDoLogicalOperation": True, #4
@@ -15,31 +18,13 @@ class Datatype(db.Model,): #overide model class
         "isDeleted":False, #16
     }
 
-    id = db.Column(sa.Integer, primary_key=True)
-    name = db.Column(sa.String(50), unique=True, nullable=False)
-    time_created = db.Column(sa.DateTime, default=datetime.now)
-    example = db.Column(sa.JSON)
-    flag = db.Column(sa.Integer, default=0)
-    # is_deleted = db.Column(sa.Boolean, default=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    example: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON)
+    time_created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    flag: Mapped[int] = mapped_column(Integer, default=0)
 
 
-    @property
-    def flag_obj(self) -> BitFlag:
-        return BitFlag(self.flags_map, self.flag)
-
-    @property
-    def flags_dict(self):
-        return self.flag_obj.to_dict_flags()
-
-    @property
-    def flag_val(self):
-        return self.flag_obj.get_flag()
-    
-    def set_flags(self, flag_fields: dict):
-        st = self.flag_obj
-        self.flag = st.set_flags(flag_fields)
-        
-                    
     def to_dict(self):
         return {
             "id": self.id,
@@ -47,5 +32,5 @@ class Datatype(db.Model,): #overide model class
             "example": self.example,
             "time_created": self.time_created.isoformat(),
             "flag": self.flag,
-            "flags_map": self.flags_dict,
+            "flags_map": self.to_dict_flags(),
         }

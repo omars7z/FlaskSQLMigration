@@ -1,9 +1,9 @@
 from flask import Flask
 from .extensions import db
-from .api.datatype_controller import bp as api_bp
-from .Services.registry import init_services
 from app.config import get_config
-from app.Util.manager import load_repositries
+from app.Helpers.manager import load_repositries
+from .Services.registry import init_services
+from .api.datatype_controller import bp as api_bp
 from .Services import datatype_service
 
 # def create_app():

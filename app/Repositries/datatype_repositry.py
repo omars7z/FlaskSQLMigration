@@ -8,7 +8,7 @@ class DatatypeRepositry(BaseRepositry):
     
     def get_by_id(self, id):
         dt = Datatype.query.filter_by(id=id).first()
-        if dt and dt.flags_dict.get("isDeleted"):
+        if dt and dt.to_dict_flags().get("isDeleted"):
             return None
         return dt
         

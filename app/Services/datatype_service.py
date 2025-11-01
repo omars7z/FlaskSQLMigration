@@ -19,6 +19,6 @@ class DatatypeService:
         return self.repo.update(id, data)  
 
     def delete(self, dt):
-        if dt.flag_val & 1:
+        if dt.get_flag() & 1:
             raise ValueError("Can't delete this datatype (protected by flag=1)")
         self.repo.delete(dt)
