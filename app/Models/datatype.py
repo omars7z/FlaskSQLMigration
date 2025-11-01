@@ -3,9 +3,8 @@ import sqlalchemy as sa
 from datetime import datetime
 from ..Util.base_model import BaseModel2
 from typing import Optional, Dict, Any
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, String, DateTime, JSON
-from pydantic import BaseModel, ValidationError, create_model
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Integer, String, DateTime, JSON, ForeignKey
 
 class Datatype(BaseModel2): #overide model class 
     __tablename__ = "datatypes"
@@ -23,7 +22,9 @@ class Datatype(BaseModel2): #overide model class
     example: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON)
     time_created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     flag: Mapped[int] = mapped_column(Integer, default=0)
-
+    
+    creator_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), default=1)
+    creator = relationship("User", back_populates="datatypes")
 
     def to_dict(self):
         return {

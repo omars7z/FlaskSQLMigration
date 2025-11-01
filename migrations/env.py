@@ -13,8 +13,7 @@ from app.extensions import db
 from app import create_app
 
 # initialize Flask app so models are registered
-config_name = os.getenv("FLASK_ENV")
-app = create_app(config_name)
+app = create_app()
 
 
 # Alembic Config object
