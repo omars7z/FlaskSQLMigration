@@ -2,12 +2,11 @@ from flask import Flask
 from .extensions import db
 from app.config import get_config
 from app.Helpers.manager import load_repositries
-from .Services.registry import init_services
-from .api.datatype_controller import bp as api_bp
+from .Helpers.registry import init_services
+from .Controllers.datatype_controller import bp as api_bp
 from .Services import datatype_service
 
-# def create_app():
-def create_app(config_name):
+def create_app():
     
     app = Flask(__name__)
     

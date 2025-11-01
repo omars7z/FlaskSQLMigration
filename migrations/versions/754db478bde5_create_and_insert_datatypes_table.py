@@ -11,7 +11,7 @@ from alembic import op
 from sqlalchemy.orm import Session
 import sqlalchemy as sa
 from datetime import datetime
-from app.models.datatype import Datatype
+from app.Models.datatype import Datatype
 
 # revision identifiers, used by Alembic.
 revision: str = '754db478bde5'

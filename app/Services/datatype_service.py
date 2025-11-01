@@ -1,4 +1,4 @@
-from app.Services.registry import register
+from app.Helpers.registry import register
 
 @register("Datatype")
 class DatatypeService:

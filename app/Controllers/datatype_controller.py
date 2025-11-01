@@ -68,7 +68,7 @@ class DatatypeResource(Resource):
             return error_res(str(e), 403)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res({"msg": f"Deleted datatype '{dt.name}'"}, 200)
+        return suc_res({"msg": f"Deleted datatype '{dt.name}"}, 200)
 
 
 api.add_resource(DatatypeResource, '/datatype', '/datatype/<int:id>')
