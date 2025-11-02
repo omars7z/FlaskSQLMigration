@@ -5,9 +5,6 @@ class DatatypeService:
     
     def __init__(self, repository):
         self.repo = repository
-             
-    def get_by_id(self, id:int):
-        return self.repo.get_by_id(id)
     
     def get(self, filters):
         return self.repo.get(filters)

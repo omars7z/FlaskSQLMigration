@@ -20,8 +20,8 @@ class User(BaseModel2):
     flag: Mapped[int] = mapped_column(Integer, default=0)
     time_created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
-    # Use string reference to avoid circular imports
-    datatypes = relationship("Datatype", back_populates="creator", cascade="all, delete-orphan")
+    # string reference to avoid circular imports
+    datatypes = relationship("Datatype", back_populates="creator", cascade="all, delete-orphan") #delete in subclass
 
     def to_dict(self):
         return {

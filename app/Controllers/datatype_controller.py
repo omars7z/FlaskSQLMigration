@@ -1,14 +1,13 @@
 from flask_restful import Api, Resource
 from sqlalchemy.exc import SQLAlchemyError
 from app.Models.datatype import Datatype
-from app.decorators.schema_validator import validate_schema
+from app.decorators.marshmellow import validate_schema
 from app.decorators.cpost_decorator import validate_post
 from app.decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
 
-from flask import Blueprint, request, current_app, g
-bp = Blueprint("api", __name__, url_prefix="/api")
-api = Api(bp)
+from flask import request, current_app, g
+
 
 class DatatypeResource(Resource):
     @property
@@ -71,4 +70,3 @@ class DatatypeResource(Resource):
         return suc_res({"msg": f"Deleted datatype '{dt.name}"}, 200)
 
 
-api.add_resource(DatatypeResource, '/datatype', '/datatype/<int:id>')

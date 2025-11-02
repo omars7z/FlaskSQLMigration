@@ -1,12 +1,12 @@
-from flask import Blueprint, current_app, request, g
-from flask_restful import Resource, Api
+from flask_restful import Resource
 from app.Models.user import User
 from app.Util.response import suc_res, error_res
 from app.decorators.filter_methods import auto_filter_method
-from app.decorators.schema_validator import validate_schema
+from app.decorators.marshmellow import validate_schema
+from app.decorators.authentication import authenticate
 
-bp = Blueprint("api", __name__, url_prefix="/api")
-api = Api(bp)
+from flask import current_app, request, g
+
 
 class UserResource(Resource):
     
@@ -14,7 +14,7 @@ class UserResource(Resource):
     def service(self):
         return current_app.user_service
     
-    # @auth_required
+    # @authenticate
     @auto_filter_method(User)
     def get(self, id=None, filters=None, current_user=None):
         if id is not None:
@@ -33,19 +33,20 @@ class UserResource(Resource):
             return suc_res([], 200)
         return suc_res([u.to_dict() for u in data], 200)
     
-    # @auth_required
+    @authenticate
     @validate_schema(User)
     def post(self):
-        data = request.json_body()
+        # data = request.json_body()
+        validated_user = request.validated_data
+        
         try:
             user = self.service.create_user(
-                email=data["email"],
-                password=data["password"],
-                current_user = request.g.current_user
+                name = validated_user.name,
+                email = validated_user.name,
+                current_user = g.current_user
                 )
             return suc_res({"msg":"User created", "token": user.token}, 201)
         except PermissionError as e:
             return error_res(str(e), 403)
     
     
-api.add_resource(UserResource, '/user', '/user/<int:id>')

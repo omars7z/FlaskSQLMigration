@@ -1,4 +1,4 @@
-from functools import wraps
+'''from functools import wraps
 from flask import request
 from pydantic import ValidationError, create_model
 from typing import Union, Optional
@@ -17,7 +17,6 @@ def sqlalchemy_to_pydantic(sa_model, partial: bool = False):
     for column in sa_model.__table__.columns:
         name = column.name
 
-        # Skip auto fields
         if name in ("id", "time_created"):
             continue
 
@@ -74,3 +73,4 @@ def validate_schema(sa_model, **schema_args):
             return f(*args, **kwargs)
         return wrapper
     return decorator
+'''

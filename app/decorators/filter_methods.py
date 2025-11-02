@@ -2,6 +2,8 @@ from functools import wraps
 from flask import request
 from app.Util.response import error_res
 
+#add filtering by relational tables (foreing keys, columns...)
+
 def auto_filter_method(model):
     def decorator(func):
         @wraps(func)

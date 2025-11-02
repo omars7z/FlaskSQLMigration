@@ -5,16 +5,15 @@ from sqlalchemy import func
 
 class UserRepositry:
     
-    def get_by_id(self, id:int):
-        return User.query.filter(id=id).first()
+    def get_by_id(self, id: int):
+        print(User.query.all())
+        return User.query.filter_by(id=id).first()
     
-    def get_by_email(self, email:str):
-        return User.query.filter(email=email).first()
     
     def get(self, filters: dict = None):
         filters = filters or {}
         flags_keys = list(User.flags_map.keys())
-        # query = User.query.filter(User.flag.op('&')(16) == 0)  # skip deleted
+        query = User.query.filter()  # skip deleted
 
         for key, val in filters.items():
             if hasattr(User, key):

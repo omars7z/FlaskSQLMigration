@@ -11,4 +11,5 @@ sqlalchemy~=2.0.29
 uvicorn
 psycopg-binary
 alembic
-python-dotenv
+pyjwt
+werkzeug~=3.1.3 

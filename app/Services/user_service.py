@@ -8,7 +8,7 @@ class UserServices:
     def __init__(self, repositry):
         self.repo = repositry
         
-    def get_by_id(self, id):
+    def get_by_id(self, id:int):
         return self.repo.get_by_id(id)
     
     def get(self, filters):
@@ -28,5 +28,5 @@ class UserServices:
         ps = user.check_password(password)
         if not user or not ps:
             return None
-        return create_access_token(idntity=user.id)
+        return create_access_token(identity=user.id)
     

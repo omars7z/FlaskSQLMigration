@@ -3,7 +3,8 @@ from .extensions import db
 from app.config import get_config
 from app.Helpers.manager import load_repositries
 from .Helpers.registry import init_services
-from .Controllers.datatype_controller import bp as api_bp
+from .Controllers import bp as api_bp
+# from .Controllers.users_controller import bp as api_bp
 from .Services import datatype_service
 from .Services import user_service
 
