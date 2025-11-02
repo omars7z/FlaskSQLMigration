@@ -1,8 +1,8 @@
 from app.Helpers.registry import register
 from app.Models.user import User
-from app.Util.jwt import create_access_token
+from app.Util.jwt_token import create_access_token
 
-@register(User)
+@register("User")
 class UserServices:
     
     def __init__(self, repositry):
@@ -11,6 +11,8 @@ class UserServices:
     def get_by_id(self, id):
         return self.repo.get_by_id(id)
     
+    def get(self, filters):
+        return self.repo.get(filters)
         
     def create_user(self, name, email):
         if not User.to_dict_flags().get("isSuperAdmin"):

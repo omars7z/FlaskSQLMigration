@@ -1,14 +1,12 @@
-from flask_restful import Api   
-from flask import request, current_app
-from flask_restful import Resource
+from flask_restful import Api, Resource
 from sqlalchemy.exc import SQLAlchemyError
 from app.Models.datatype import Datatype
 from app.decorators.schema_validator import validate_schema
-from app.decorators.pdecorator import validate_post
-from app.decorators.filter import auto_filter_method
+from app.decorators.cpost_decorator import validate_post
+from app.decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
 
-from flask import Blueprint
+from flask import Blueprint, request, current_app, g
 bp = Blueprint("api", __name__, url_prefix="/api")
 api = Api(bp)
 
@@ -38,6 +36,8 @@ class DatatypeResource(Resource):
     @validate_schema(Datatype)
     def post(self):
         data = request.get_json()
+        creator = g.current_user
+        data['creator_id'] = creator
         try:
             dt = self.service.create(data)
         except SQLAlchemyError as e:

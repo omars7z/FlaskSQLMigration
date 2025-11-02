@@ -5,6 +5,7 @@ from app.Helpers.manager import load_repositries
 from .Helpers.registry import init_services
 from .Controllers.datatype_controller import bp as api_bp
 from .Services import datatype_service
+from .Services import user_service
 
 def create_app():
     

@@ -15,7 +15,7 @@ def load_repositries():
         module = importlib.import_module(module_name)
         
         for name, obj in inspect.getmembers(module, inspect.isclass):
-            if issubclass(obj, BaseRepositry) and obj is not BaseRepositry:
+            if name.endswith("Repositry") and obj is not BaseRepositry:
                 keys = name.replace("Repositry", "")
                 repositries[keys] = obj()
                 
