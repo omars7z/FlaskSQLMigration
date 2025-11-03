@@ -1,11 +1,12 @@
 from flask_restful import Resource
+from flask import current_app, request, g
+
 from app.Models.user import User
 from app.Util.response import suc_res, error_res
 from app.decorators.filter_methods import auto_filter_method
 from app.decorators.marshmellow import validate_schema
 from app.decorators.authentication import authenticate
 
-from flask import current_app, request, g
 
 
 class UserResource(Resource):
@@ -47,5 +48,5 @@ class UserResource(Resource):
             return suc_res({"msg":"User created"}, 201)
         except PermissionError as e:
             return error_res(str(e), 403)
-    
+       
     

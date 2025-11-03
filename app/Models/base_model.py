@@ -3,10 +3,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # mixin class
 class BaseModel2(db.Model):
-    __abstract__ = True  # don’t create a table for this class
+    __abstract__ = True  # dont create a table for this class
     
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password = generate_password_hash(password)
         # <algorithm>:<hash function>:<iterations>$<salt>$<derived_key>
         # pbkdf2:sha256:260000$uGbprVjZ6EbgmFlD$41e5d5fda0f6b28ef0a3cbe56e...
         

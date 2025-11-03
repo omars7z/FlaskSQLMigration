@@ -4,6 +4,8 @@ from app.Util.response import error_res, suc_res
 from app.Util.jwt_token import decode_access_token
 from app.Models.user import User
 
+#JWT Token authorization
+
 def authenticate(f):
     @wraps(f)
     def decorated(*args, **kwargs):

@@ -45,11 +45,14 @@ class UserRepositry:
         )
         db.session.add(user)
         db.session.commit()
+        return user
         
     def set_password(self, token, password):
-        user = User.query.filter(token=token).first()
+        user = User.query.filter_by(token=token).first()
         if not user:
             return None
         user.set_password(password) #model to base_model
-        user.flags_map({"isActive":True})
+        user.flags_map = {"isActive":True}
         user.token = True
+        db.session.commit()
+        return user

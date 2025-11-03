@@ -1,12 +1,14 @@
-from flask_restful import Api, Resource
+from flask_restful import Resource
+from flask import request, current_app, g
+
 from sqlalchemy.exc import SQLAlchemyError
 from app.Models.datatype import Datatype
+
 from app.decorators.marshmellow import validate_schema
 from app.decorators.cpost_decorator import validate_post
 from app.decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
 
-from flask import request, current_app, g
 
 
 class DatatypeResource(Resource):
