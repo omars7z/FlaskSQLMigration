@@ -19,7 +19,7 @@ class Datatype(BaseModel2):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-    example: Mapped[Optional[Dict[str,str]]] = mapped_column(JSON)
+    example: Mapped[Optional[Dict[str,str]]] = mapped_column                    (JSON)
     time_created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     flag: Mapped[int] = mapped_column(Integer, default=0)
 

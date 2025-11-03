@@ -34,13 +34,13 @@ class DatatypeResource(Resource):
         else:
             return error_res(f"invalid json request: {data}", 400)
                                  
-                             
+    @authorize                   
     @validate_post()
     @validate_schema(Datatype)
     def post(self):
         data = request.get_json()
         creator = g.current_user
-        data['creator_id'] = creator
+        data['creator_id'] = creator.id
         try:
             dt = self.service.create(data)
         except SQLAlchemyError as e:
