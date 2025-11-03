@@ -11,7 +11,7 @@ class BaseModel2(db.Model):
         # pbkdf2:sha256:260000$uGbprVjZ6EbgmFlD$41e5d5fda0f6b28ef0a3cbe56e...
         
     def check_password(self, password):
-        self.password = check_password_hash(self.password, password)
+        return check_password_hash(self.password, password)
     
 
     def get_flag(self) -> int:

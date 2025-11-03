@@ -55,4 +55,3 @@ class UserRepositry:
         user.flags_map = {"isActive":True}
         user.token = True
         db.session.commit()
-        return user
