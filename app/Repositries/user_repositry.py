@@ -52,6 +52,6 @@ class UserRepositry:
         if not user:
             return None
         user.set_password(password) #model to base_model
-        user.flags_map = {"isActive":True}
+        user.set_flags({"isActive":True})
         user.token = True
         db.session.commit()

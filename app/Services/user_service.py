@@ -1,7 +1,5 @@
 from app.Helpers.registry import register
-from app.Models.user import User
 from app.Util.jwt_token import create_access_token
-from app.Util.response import suc_res
 
 @register("User")
 class UserServices:
@@ -29,7 +27,7 @@ class UserServices:
             return None
         if not user.check_password(password):
             return None
-        # if not user.to_dict_flags().get("isActive"):
-        #     return None
+        if not user.to_dict_flags().get("isActive"):
+            return None
         return create_access_token(user.id)
     

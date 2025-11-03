@@ -1,11 +1,10 @@
 from flask_restful import Resource
 from flask import current_app, request
 
-from app.decorators.authentication import authenticate
+# from app.decorators.authorization import authenticate
 from app.Util.response import suc_res, error_res
 
-
-class AuthResource(Resource):
+class AuthenticateResource(Resource):
     
     @property
     def service(self):
@@ -18,9 +17,9 @@ class AuthResource(Resource):
         email = data.get("email")
         password = data.get("password")
         
-        user = self.service.login(email, password)
-        if not user:
+        token = self.service.login(email, password)
+        if not token:
             return error_res("Wrong cregfddintials", 404)
-        return suc_res("login successfully", 200)
+        return suc_res({"yes":"login successfully", "token":token}, 200)
         
     

@@ -8,6 +8,7 @@ from app.decorators.marshmellow import validate_schema
 from app.decorators.cpost_decorator import validate_post
 from app.decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
+from app.decorators.authorization import authorize
 
 
 
@@ -16,6 +17,7 @@ class DatatypeResource(Resource):
     def service(self):
         return current_app.datatype_service
     
+    @authorize
     @auto_filter_method(Datatype)
     def get(self, id = None, filters = None):
         if id is not None:

@@ -5,7 +5,7 @@ from app.Models.user import User
 from app.Util.response import suc_res, error_res
 from app.decorators.filter_methods import auto_filter_method
 from app.decorators.marshmellow import validate_schema
-from app.decorators.authentication import authenticate
+from app.decorators.authorization import authorize
 
 
 
@@ -15,7 +15,7 @@ class UserResource(Resource):
     def service(self):
         return current_app.user_service
     
-    # @authenticate
+    @authorize
     @auto_filter_method(User)
     def get(self, id=None, filters=None, current_user=None):
         if id is not None:
@@ -34,7 +34,7 @@ class UserResource(Resource):
             return suc_res([], 200)
         return suc_res([u.to_dict() for u in data], 200)
     
-    # @authenticate
+    # @authorize
     @validate_schema(User)
     def post(self):
         # data = request.json_body()
@@ -42,7 +42,7 @@ class UserResource(Resource):
         try:
             user = self.service.create_user(
                 name = validated_user.name,
-                email = validated_user.name,
+                email = validated_user.email,
                 current_user=getattr(g, "current_user", None)
                 )
             return suc_res({"msg":"User created"}, 201)

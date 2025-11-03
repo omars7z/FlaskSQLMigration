@@ -6,11 +6,11 @@ from app.Models.user import User
 
 #JWT Token authorization
 
-def authenticate(f):
+def authorize(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         
-        auth_header = request.headers.get("Authorization")
+        auth_header = request.headers.get("Authorization") #AAuthorization Berear: fuihreoafoieug32j4n54ibkbkjbfr5...
         if not auth_header or not auth_header.startswith("Bearer "):
             return error_res("missing or wrong auth header", 401)
         
