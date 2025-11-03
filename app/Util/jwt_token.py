@@ -1,20 +1,21 @@
-import jwt
-from datetime import datetime, timedelta
+from jwt import JWT, exceptions
+from datetime import datetime, timedelta, timezone
 from flask import current_app
 
 def create_access_token(user_id):
-    header = {
+    payload = {
         "user_id" : user_id,
-        "expiry" : datetime.now(datetime.timezone.utc) + timedelta(minutes=10)
+        "expiry" : datetime.now(timezone.utc) + timedelta(minutes=10)
     }
     
-    return jwt.JWT.encode(header, current_app["SECRET_KEY"], algorithm="HS256") #header.payload.signature
+    token = JWT.encode(payload, current_app["SECRET_KEY"], algorithm="HS256") #header.payload.signature
+    return token
 
 def decode_access_token(token):
     try:
-        payload = jwt.JWT.decode(token, current_app["SECRET_KEY"], algorithm="HS256")
+        payload = JWT.decode(token, current_app["SECRET_KEY"], algorithm="HS256")
         return payload["current_id"]
-    except jwt.ExpiredSignatureError:
+    except JWT.ExpiredSignatureError:
         return None
-    except jwt.InvalidTokenError:
+    except exceptions.InvalidKeyTypeError:
         return None

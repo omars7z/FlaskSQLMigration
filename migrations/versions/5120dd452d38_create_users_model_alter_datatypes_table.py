@@ -29,7 +29,7 @@ def upgrade() -> None:
             sa.Column('id', sa.Integer(), primary_key=True),
             sa.Column('name', sa.String(50), unique=True, nullable=False),
             sa.Column('email', sa.String(120), unique=True, nullable=False),
-            sa.Column('password', sa.String(512), nullable=False),
+            sa.Column('password', sa.String(512), nullable=True),
             sa.Column('token', sa.String(256), nullable=True),
             sa.Column('flag', sa.Integer(), nullable=False, server_default="0"),
             sa.Column('time_created', sa.DateTime(), nullable=False, server_default=sa.text("now()"))

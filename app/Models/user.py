@@ -16,7 +16,7 @@ class User(BaseModel2):
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
     password: Mapped[Optional[str]] = mapped_column(String(512))
-    token: Mapped[Optional[str]] = mapped_column(String(256))
+    token: Mapped[Optional[str]] = mapped_column(String(256), nullable=True)
     flag: Mapped[int] = mapped_column(Integer, default=0)
     time_created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 

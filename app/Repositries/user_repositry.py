@@ -9,6 +9,9 @@ class UserRepositry:
         print(User.query.all())
         return User.query.filter_by(id=id).first()
     
+    def get_by_email(self, email):
+        return User.query.filter(func.lower(User.email) == email.lower()).first()
+    
     
     def get(self, filters: dict = None):
         filters = filters or {}
@@ -33,13 +36,12 @@ class UserRepositry:
 
         return query.all()        
     
-    def create_user(self, name, email, super_admin=False):
+    def create_user(self, name, email):
         token = secrets.token_urlsafe(32)
         user = User(
             name=name,
             email=email,
             token=token,
-            flag=2 if super_admin else 0
         )
         db.session.add(user)
         db.session.commit()
@@ -48,6 +50,6 @@ class UserRepositry:
         user = User.query.filter(token=token).first()
         if not user:
             return None
-        user.set_password(password)
+        user.set_password(password) #model to base_model
         user.flags_map({"isActive":True})
         user.token = True

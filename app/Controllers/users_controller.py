@@ -33,19 +33,18 @@ class UserResource(Resource):
             return suc_res([], 200)
         return suc_res([u.to_dict() for u in data], 200)
     
-    @authenticate
+    # @authenticate
     @validate_schema(User)
     def post(self):
         # data = request.json_body()
         validated_user = request.validated_data
-        
         try:
             user = self.service.create_user(
                 name = validated_user.name,
                 email = validated_user.name,
-                current_user = g.current_user
+                current_user=getattr(g, "current_user", None)
                 )
-            return suc_res({"msg":"User created", "token": user.token}, 201)
+            return suc_res({"msg":"User created"}, 201)
         except PermissionError as e:
             return error_res(str(e), 403)
     

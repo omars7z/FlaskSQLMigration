@@ -5,7 +5,6 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 from typing import Type
 from app.extensions import db
-from app.Models.datatype import Datatype
 
 def sqlalchemy_to_marshmallow(sa_model: Type, partial: bool = False, session=None):
     """
@@ -36,11 +35,7 @@ def sqlalchemy_to_marshmallow(sa_model: Type, partial: bool = False, session=Non
 
 
 def validate_schema(sa_model: Type, partial: bool = False):
-    """
-    Flask decorator to validate JSON input against a dynamically generated Marshmallow schema.
-    - Attaches validated data to `request.validated_data`
-    - Returns 422 if validation fails
-    """
+    
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
