@@ -39,7 +39,7 @@ def validate_post():
                     txts.extend(str(v).lower() for v in e.values())
 
 
-            # --- Validate flags logically ---
+            # Validate flags n example
             for flag, pattern in flag_checks.items():
                 flag_val = data.get(flag, False)
                 matching_pattern = any(re.search(pattern, str(txt)) for txt in txts)

@@ -6,7 +6,7 @@ api = Api(bp)
 
 
 from app.Controllers.users_controller import UserResource
-from app.Controllers.pass_controller import PasswordResource
+from app.Controllers.password_controller import PasswordResource
 from app.Controllers.authenticate_controller import AuthenticateResource
 from app.Controllers.datatype_controller import DatatypeResource
 

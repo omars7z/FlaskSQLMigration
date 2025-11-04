@@ -4,11 +4,11 @@ from flask import request, current_app, g
 from sqlalchemy.exc import SQLAlchemyError
 from app.Models.datatype import Datatype
 
-from app.decorators.marshmellow import validate_schema
-from app.decorators.cpost_decorator import validate_post
-from app.decorators.filter_methods import auto_filter_method
+from app.Decorators.marshmellow import validate_schema
+from app.Decorators.cpost_decorator import validate_post
+from app.Decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
-from app.decorators.authorization import authorize
+from app.Decorators.authorization import authorize
 
 
 
@@ -28,7 +28,7 @@ class DatatypeResource(Resource):
         
         data = self.service.get(filters)
         if not data:
-            return suc_res([], 200)
+            return error_res([], 401)
         elif isinstance(data, list):
             return suc_res([dt.to_dict() for dt in data], 200)
         else:
@@ -47,7 +47,7 @@ class DatatypeResource(Resource):
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 201)
     
-       
+    @authorize
     @validate_schema(Datatype, partial=True)
     def put(self, id:int):
         data = request.get_json()
@@ -60,7 +60,8 @@ class DatatypeResource(Resource):
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 200)
     
-
+    # @authorize
+    # @creator
     def delete(self, id:int):
         dt = self.service.get_by_id(id)
         if not dt:

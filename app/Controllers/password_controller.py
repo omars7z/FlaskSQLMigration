@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import current_app, request
 from app.Util.response import suc_res, error_res
+from app.Decorators.authorization import authorize
 
 
 class PasswordResource(Resource):
@@ -11,6 +12,7 @@ class PasswordResource(Resource):
     
     
     #@validate_schema always make custom? or how to make it ultra dynamic
+    @authorize
     def post(self):
         data = request.get_json()
         token = data.get("token")
