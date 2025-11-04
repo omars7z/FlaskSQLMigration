@@ -23,8 +23,10 @@ class UserServices:
     
     def login(self, email, password):
         user = self.repo.get_by_email(email)
-        password = user.check_password(password)
-        if not user or not password:
+        if not user:
+            return None
+        valid_password = user.check_password(password)
+        if not valid_password:
             return None
         if not user.to_dict_flags().get("isActive"):
             return None
