@@ -1,18 +1,16 @@
-# app/decorators/marshmallow_schema.py
 from functools import wraps
 from flask import request
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-import marshmallow
-from marshmallow import fields, ValidationError, INCLUDE
+from marshmallow import fields, ValidationError
 from typing import Type
 from app.extensions import db
 
 def sqlalchemy_to_marshmallow(sa_model: Type, partial: bool = False, session=None):
     """
-    Dynamically create a Marshmallow schema from a SQLAlchemy model.
-    - partial=True → allows partial updates
-    - session → SQLAlchemy session required if load_instance=True
-    - Automatically includes Datatype flags as optional boolean fields
+    Dynamically create marshmallow schema from a SQLAlchemy model
+    - partial=True -> for partial Put
+    - session -> SQLAlchemy session required if load_instance=True
+    - flags optional fields
     """
     class DynamicSchema(SQLAlchemyAutoSchema):
         class Meta:
@@ -20,9 +18,8 @@ def sqlalchemy_to_marshmallow(sa_model: Type, partial: bool = False, session=Non
             load_instance = True #make orm objecct to insert directly
             sqla_session = session or db.session
             include_fk = True
-            unknown = marshmallow.INCLUDE
 
-    # Add dynamic JSON fields and bitflags
+    # add dynamic JSON fields and bitflags
     for column in sa_model.__table__.columns:
         if str(column.type).lower() == "json":
             setattr(DynamicSchema, column.name, 
@@ -49,7 +46,14 @@ def validate_schema(sa_model: Type, partial: bool = False):
             try:
                 validated_obj = schema.load(data)
             except ValidationError as err:
-                return {"success": False, "errors": err.messages}, 422
+                missing_fields = [field for field, msgs in err.messages.items() if any("Missing data" in m for m in msgs)]
+                erros = {
+                    "message": "Validation failed",
+                    "missing_fields": missing_fields,
+                    "errors": err.messages,
+                }
+                return {"success": False, "errors": erros}, 422
+            
 
             request.validated_data = validated_obj
             return f(*args, **kwargs)
