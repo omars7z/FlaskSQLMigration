@@ -5,10 +5,6 @@ from app.Models.datatype import Datatype
 import re
 
 def validate_post():
-    """
-    Validator for POST request JSON using the Datatype model.
-    Pulls name max length and flags dynamically from Datatype.
-    """
 
     name_column = Datatype.__table__.columns["name"]
     max_length = getattr(name_column.type, "length", None)
@@ -28,7 +24,6 @@ def validate_post():
             if name and max_length and len(str(name)) > max_length:
                 errors.append(f"Field 'name' must not exceed {max_length} characters")
 
-            # Flatten example
             example = data.get("example", [])
             if not isinstance(example, list):
                 example = [example]
@@ -39,7 +34,7 @@ def validate_post():
                     txts.extend(str(v).lower() for v in e.values())
 
 
-            # Validate flags n example
+            # validate flags n example
             for flag, pattern in flag_checks.items():
                 flag_val = data.get(flag, False)
                 matching_pattern = any(re.search(pattern, str(txt)) for txt in txts)
