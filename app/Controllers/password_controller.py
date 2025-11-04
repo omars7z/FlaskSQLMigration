@@ -11,7 +11,6 @@ class PasswordResource(Resource):
         return current_app.user_service
     
     
-    #@validate_schema always make custom? or how to make it ultra dynamic
     @authorize
     def post(self):
         data = request.get_json()
@@ -19,5 +18,5 @@ class PasswordResource(Resource):
         password = data.get("password")
         user = self.service.set_password(token, password)
         if not user:
-            error_res("Invalid credintials: wrong sesion token", 401)
-        suc_res("password set succesfuly", 200)
+            return error_res("Invalid credintials: wrong sesion token", 401)
+        return suc_res("password set succesfuly", 200)
