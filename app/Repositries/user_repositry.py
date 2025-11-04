@@ -53,5 +53,6 @@ class UserRepositry:
             return None
         user.set_password(password) #model to base_model
         user.set_flags({"isActive":True})
-        user.token = True
+        user.token = None
         db.session.commit()
+        return user 
