@@ -40,7 +40,6 @@ class UserResource(Resource):
             user = self.service.create_user(
                 name = validated_user.name,
                 email = validated_user.email,
-                # current_user=getattr(g, "current_user", None)
                 current_user=g.current_user
                 )
             return suc_res({"msg":"User created", "token":user.token}, 201)

@@ -10,8 +10,6 @@ from app.Decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
 from app.Decorators.authorization import authorize
 
-
-
 class DatatypeResource(Resource):
     @property
     def service(self):
@@ -23,12 +21,12 @@ class DatatypeResource(Resource):
         if id is not None:
             data = self.service.get_by_id(id)
             if not data:
-                return error_res("invalid json request: {data}", 400)
+                return  error_res([], 404)
             return suc_res(data.to_dict(), 200)
         
         data = self.service.get(filters)
         if not data:
-            return error_res([], 401)
+            return error_res([], 404)
         elif isinstance(data, list):
             return suc_res([dt.to_dict() for dt in data], 200)
         else:
@@ -60,16 +58,15 @@ class DatatypeResource(Resource):
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 200)
     
-    # @authorize
-    # @creator
+    @authorize
     def delete(self, id:int):
         dt = self.service.get_by_id(id)
         if not dt:
             return error_res("Datatype not found", 404)
+        if dt.creator_id != g.current_user.id:
+            return error_res("You are not allowed to delete this datatype", 403)
         try:
             self.service.delete(dt)
-        except ValueError as e:
-            return error_res(str(e), 403)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res({"msg": f"Deleted datatype '{dt.name}"}, 200)

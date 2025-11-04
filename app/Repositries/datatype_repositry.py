@@ -64,9 +64,9 @@ class DatatypeRepositry(BaseRepositry):
 
 
     def delete(self, obj):
-        # db.session.delete(obj)
         obj.set_flags({"isDeleted":True})
         print("DELETEDD this")
+        # db.session.delete(obj)
         db.session.commit()
         return obj
         
