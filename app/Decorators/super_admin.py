@@ -10,7 +10,6 @@ def superadmin_required(f):
         if not current_user:
             return error_res("User not authenticated", 401)
 
-        # Check if user has 'isSuperAdmin' flag
         if not current_user.to_dict_flags().get("isSuperAdmin"):
             return error_res("permission denied: Super admin only", 403)
 
