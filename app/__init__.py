@@ -4,9 +4,10 @@ from app.config import get_config
 from app.Helpers.manager import load_repositries
 from .Helpers.registry import init_services
 from .Controllers import bp as api_bp
-# from .Controllers.users_controller import bp as api_bp
 from .Services import datatype_service
 from .Services import user_service
+from .Services import auth_service
+from .Services import password_service
 
 def create_app():
     

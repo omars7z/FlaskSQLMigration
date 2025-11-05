@@ -2,7 +2,7 @@
 from app.Util.jwt_token import create_access_token
 from app.Helpers.registry import register
 
-@register("Auth")
+@register("Auth", repo="User")
 class AuthService:
     
     def __init__(self, repository):
@@ -17,4 +17,4 @@ class AuthService:
             return None 
         if not user.to_dict_flags().get("isActive"):
             return None
-        return create_access_token(user)
+        return create_access_token(user.id)

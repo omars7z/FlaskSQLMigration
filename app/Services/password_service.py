@@ -1,10 +1,10 @@
 
 from app.Helpers.registry import register
 
-@register("Password")
+@register("Password", repo="User")
 class PasswordService:
-    def __init__(self, user_repo):
-        self.repo = user_repo
+    def __init__(self, repositry):
+        self.repo = repositry
 
     def set_password(self, token, password):
         return self.repo.set_password(token, password)

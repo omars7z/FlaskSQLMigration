@@ -8,7 +8,7 @@ class PasswordResource(Resource):
     
     @property
     def service(self):
-        return current_app.user_service
+        return current_app.password_service
     
     
     @authorize

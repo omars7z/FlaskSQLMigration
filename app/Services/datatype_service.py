@@ -1,6 +1,6 @@
 from app.Helpers.registry import register
 
-@register("Datatype")
+@register("Datatype", repo="Datatype")
 class DatatypeService:
     
     def __init__(self, repository):
@@ -16,7 +16,7 @@ class DatatypeService:
         return self.repo.create(data)
     
     def update(self, id, data: dict):
-        return self.repo.update(id, data)  #here
+        return self.repo.update(id, data)  
 
     def delete(self, dt):
         if dt.get_flag() & 1:
