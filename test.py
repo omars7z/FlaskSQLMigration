@@ -20,3 +20,23 @@ car["color"] = "white"
 #print(car.values())
 for i, (key, value) in enumerate(car.items()):
 	print(i, key, value)
+ 
+k =  {key: bool(i & (1 << i)) for i, key in enumerate(data.keys())}
+print(k)
+
+flags_map = {
+        "cantBeDeleted": False,
+        "canDoMathOperation": False,
+        "canDoLogicalOperation": True,
+        "isIterable": False,
+        "isDeleted": False,
+    }
+
+flag= 16
+checked = {}
+
+for i, key in enumerate(flags_map.keys()):
+	k = bool(flag & (1<<i))
+	checked[key] = k
+ 
+print(checked)
