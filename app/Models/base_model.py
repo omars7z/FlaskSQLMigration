@@ -26,8 +26,11 @@ class BaseModel2(db.Model):
 
     def to_dict_flags(self) -> dict:
         val = getattr(self, "flag", 0) or 0
-        k = {key: bool(val & (1 << i)) for i, key in enumerate(self.flags_map.keys())} #return bool if flag is set or no
-        return k 
+        res = {}
+        for i, key in enumerate(self.flags_map.keys()): #return bool if flag is set or no
+            checked =  bool(val & (1 << i))
+            res[key] = checked
+        return res 
 
     def set_flags(self, flags: dict):
         val = getattr(self, "flag", 0) or 0

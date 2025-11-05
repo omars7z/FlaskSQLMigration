@@ -22,3 +22,16 @@ def load_repositries():
         
     print("Loaded repositories:", list(repositries.keys()))            
     return repositries
+
+def load_services():
+    service_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Services")
+    
+    for filename in os.listdir(service_dir):
+        if not filename.endswith("_service.py"):
+            continue
+        
+        module_name = f"app.Services.{filename[:-3]}"
+        importlib.import_module(module_name)
+        
+
+        
