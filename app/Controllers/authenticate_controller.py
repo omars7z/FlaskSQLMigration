@@ -7,7 +7,7 @@ class AuthenticateResource(Resource):
     
     @property
     def service(self):
-        return current_app.user_service
+        return current_app.auth_service
     
     def post(self):
         data = request.get_json()

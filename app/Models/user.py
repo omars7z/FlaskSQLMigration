@@ -1,6 +1,6 @@
 from app.Models.base_model import BaseModel2
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy import Integer, String, DateTime
 from datetime import datetime
 
@@ -9,7 +9,7 @@ class User(BaseModel2):
 
     flags_map = {
         "isActive": False,
-        "isSuperAdmin": False
+        "isSuperAdmin": False,
     }
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -20,7 +20,6 @@ class User(BaseModel2):
     flag: Mapped[int] = mapped_column(Integer, default=0)
     time_created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
-    # datatypes = relationship("Datatype", back_populates="creator", cascade="all, delete-orphan") #delete in subclass
     datatypes= relationship("Datatype", back_populates="creator", foreign_keys="[Datatype.creator_id]")
     
     def to_dict(self):

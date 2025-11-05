@@ -36,8 +36,9 @@ class UserRepositry:
 
         return query.all()        
     
-    def create_user(self, name, email):
+    def create_user(self, name, email, **kwargs):
         token = secrets.token_urlsafe(32)
+        # user = User(**kwargs)
         user = User(
             name=name,
             email=email,
@@ -56,3 +57,10 @@ class UserRepositry:
         user.token = None
         db.session.commit()
         return user 
+    
+    def delete_user(self, id):
+        user = User.query.filter_by(id=id).first()
+        user.set_flags({"isDeleted": True})
+        # db.session.delete(id)
+        db.session.commit()
+        return user

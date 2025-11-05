@@ -32,3 +32,5 @@ class UserServices:
             return None
         return create_access_token(user.id)
     
+    def delete_user(self, id):
+        return self.repo.delete_user(id)

@@ -53,7 +53,7 @@ class DatatypeResource(Resource):
         if not dt:
             return error_res(f"Datatype with id={id} not found", 404)
         try:
-            dt = self.service.update(id, data)
+            dt = self.service.update(id, data) #here
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 200)
@@ -62,7 +62,7 @@ class DatatypeResource(Resource):
     def delete(self, id:int):
         dt = self.service.get_by_id(id)
         if not dt:
-            return error_res("Datatype not found", 404)
+            return error_res("Datatype with id={id} not found", 404)
         if dt.creator_id != g.current_user.id:
             return error_res("You are not allowed to delete this datatype", 403)
         try:

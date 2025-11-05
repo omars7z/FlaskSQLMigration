@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from flask import current_app, request, g
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.Models.user import User
 from app.Util.response import suc_res, error_res
@@ -24,7 +25,6 @@ class UserResource(Resource):
                 return error_res("User not found", 404)
             return suc_res(data.to_dict(), 200)
         
-        
         data = self.service.get(filters)
         if not data:
             return error_res([], 404)
@@ -34,7 +34,6 @@ class UserResource(Resource):
     @superadmin_required
     @validate_schema(User)
     def post(self):
-        # data = request.json_body()
         validated_user = request.validated_data
         try:
             user = self.service.create_user(
@@ -46,4 +45,15 @@ class UserResource(Resource):
         except PermissionError as e:
             return error_res(str(e), 403)
        
-    
+       
+    @authorize
+    @superadmin_required   
+    def delete(self, id:int):
+        dt = self.service.get_by_id(id)
+        if not dt:
+            return error_res(f"No id {id} found", 404)
+        try:
+            self.service.delete_user(id)
+        except SQLAlchemyError as e:
+            return error_res("Database error: " + str(e), 500)
+        return suc_res({"msg": f"Deleted user '{dt.name}"}, 200)
