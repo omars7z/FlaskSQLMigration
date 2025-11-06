@@ -47,9 +47,9 @@ def upgrade() -> None:
         session.execute(
             sa.insert(users_table).values(
                 name="system",
-                email="system@system.local",
-                password=generate_password_hash("system_default_pass"),
-                token=None,
+                email="system@gmail.com",
+                password=generate_password_hash("default_pass"),
+                # token=None,
                 flag=3
             )
         )

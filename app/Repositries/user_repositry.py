@@ -36,9 +36,8 @@ class UserRepositry:
 
         return query.all()        
     
-    def create_user(self, name, email, **kwargs):
+    def create_user(self, name, email):
         token = secrets.token_urlsafe(32)
-        # user = User(**kwargs)
         user = User(
             name=name,
             email=email,
@@ -48,6 +47,13 @@ class UserRepositry:
         db.session.commit()
         return user
         
+    def delete_user(self, id):
+        user = User.query.filter_by(id=id).first()
+        user.set_flags({"isDeleted": True})
+        # db.session.delete(id)
+        db.session.commit()
+        return user
+    
     def set_password(self, token, password):
         user = User.query.filter_by(token=token).first()
         if not user:
@@ -58,9 +64,11 @@ class UserRepositry:
         db.session.commit()
         return user 
     
-    def delete_user(self, id):
-        user = User.query.filter_by(id=id).first()
-        user.set_flags({"isDeleted": True})
-        # db.session.delete(id)
+    def assign_role(self, id, role):
+        user = self.service.get_by_id(id)
+        role = User.query.filter_by(name=role).first()
+        if not role:
+            raise ValueError("role doesn't exist")
+        user.roles.append(role)
         db.session.commit()
         return user

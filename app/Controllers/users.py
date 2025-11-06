@@ -1,11 +1,12 @@
 from flask_restful import Resource
 from flask import current_app, request, g
 from sqlalchemy.exc import SQLAlchemyError
-
+from app.Schemas.user import UserCreateSchema
 from app.Models.user import User
+
 from app.Util.response import suc_res, error_res
 from app.Decorators.filter_methods import auto_filter_method
-from app.Decorators.marshmellow import validate_schema
+from app.Decorators.validation import validate_schema
 from app.Decorators.authentication import authenticate
 from app.Decorators.super_admin import superadmin_required
 
@@ -32,13 +33,13 @@ class UserResource(Resource):
     
     @authenticate
     @superadmin_required
-    @validate_schema(User)
+    @validate_schema(UserCreateSchema)
     def post(self):
         validated_user = request.validated_data
         try:
             user = self.service.create_user(
-                name = validated_user.name,
-                email = validated_user.email,
+                name = validated_user["name"],
+                email = validated_user["email"],
                 current_user=g.current_user
                 )
             return suc_res({"msg":"User created", "token":user.token}, 201)
@@ -57,3 +58,7 @@ class UserResource(Resource):
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res({"msg": f"Deleted user '{dt.name}"}, 200)
+
+
+def register_routes(api):
+    api.add_resource(UserResource, '/user', '/user/<int:id>')

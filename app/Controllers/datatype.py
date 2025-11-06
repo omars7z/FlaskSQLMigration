@@ -3,8 +3,9 @@ from flask import request, current_app, g
 
 from sqlalchemy.exc import SQLAlchemyError
 from app.Models.datatype import Datatype
+from app.Schemas.datatype import DatatypeSchema
 
-from app.Decorators.marshmellow import validate_schema
+from app.Decorators.validation import validate_schema
 from app.Decorators.cpost_decorator import validate_post
 from app.Decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
@@ -34,7 +35,7 @@ class DatatypeResource(Resource):
                                  
     @authenticate                   
     @validate_post()
-    @validate_schema(Datatype)
+    @validate_schema(DatatypeSchema)
     def post(self):
         data = request.get_json()
         creator = g.current_user
@@ -46,7 +47,7 @@ class DatatypeResource(Resource):
         return suc_res(dt.to_dict(), 201)
     
     @authenticate
-    @validate_schema(Datatype, partial=True)
+    @validate_schema(DatatypeSchema)
     def put(self, id:int):
         data = request.get_json()
         dt = self.service.get_by_id(id)
@@ -71,4 +72,5 @@ class DatatypeResource(Resource):
             return error_res("Database error: " + str(e), 500)
         return suc_res({"msg": f"Deleted datatype '{dt.name}"}, 200)
 
-
+def register_routes(api):
+    api.add_resource(DatatypeResource, '/datatype', '/datatype/<int:id>')

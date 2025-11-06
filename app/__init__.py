@@ -4,6 +4,7 @@ from app.config import get_config
 from app.Helpers.manager import load_repositries, load_services
 from .Helpers.registry import init_services
 from .Controllers import bp as api_bp
+
 def create_app():
     
     app = Flask(__name__)
