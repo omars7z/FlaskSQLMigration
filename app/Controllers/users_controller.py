@@ -6,7 +6,7 @@ from app.Models.user import User
 from app.Util.response import suc_res, error_res
 from app.Decorators.filter_methods import auto_filter_method
 from app.Decorators.marshmellow import validate_schema
-from app.Decorators.authorization import authorize
+from app.Decorators.authentication import authenticate
 from app.Decorators.super_admin import superadmin_required
 
 
@@ -16,7 +16,7 @@ class UserResource(Resource):
     def service(self):
         return current_app.user_service
     
-    @authorize
+    @authenticate
     @auto_filter_method(User)
     def get(self, id=None, filters=None):
         if id is not None:
@@ -30,7 +30,7 @@ class UserResource(Resource):
             return error_res([], 404)
         return suc_res([u.to_dict() for u in data], 200)
     
-    @authorize
+    @authenticate
     @superadmin_required
     @validate_schema(User)
     def post(self):
@@ -46,7 +46,7 @@ class UserResource(Resource):
             return error_res(str(e), 403)
        
        
-    @authorize
+    @authenticate
     @superadmin_required   
     def delete(self, id:int):
         dt = self.service.get_by_id(id)

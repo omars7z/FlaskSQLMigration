@@ -8,14 +8,14 @@ from app.Decorators.marshmellow import validate_schema
 from app.Decorators.cpost_decorator import validate_post
 from app.Decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
-from app.Decorators.authorization import authorize
+from app.Decorators.authentication import authenticate
 
 class DatatypeResource(Resource):
     @property
     def service(self):
         return current_app.datatype_service
     
-    @authorize
+    @authenticate
     @auto_filter_method(Datatype)
     def get(self, id = None, filters = None):
         if id is not None:
@@ -32,7 +32,7 @@ class DatatypeResource(Resource):
         else:
             return error_res(f"invalid json request: {data}", 400)
                                  
-    @authorize                   
+    @authenticate                   
     @validate_post()
     @validate_schema(Datatype)
     def post(self):
@@ -45,7 +45,7 @@ class DatatypeResource(Resource):
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 201)
     
-    @authorize
+    @authenticate
     @validate_schema(Datatype, partial=True)
     def put(self, id:int):
         data = request.get_json()
@@ -58,7 +58,7 @@ class DatatypeResource(Resource):
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 200)
     
-    @authorize
+    @authenticate
     def delete(self, id:int):
         dt = self.service.get_by_id(id)
         if not dt:

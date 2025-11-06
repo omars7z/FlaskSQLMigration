@@ -18,4 +18,4 @@ class AuthenticateResource(Resource):
             return error_res("Wrong cregfddintials", 404)
         return suc_res({"yes":"login successfully", "token":token}, 200)
         
-    
+    #logout, JWT management

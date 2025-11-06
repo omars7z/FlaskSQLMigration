@@ -6,7 +6,7 @@ from app.Models.user import User
 
 #JWT Token authorization
 
-def authorize(f):
+def authenticate(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         
