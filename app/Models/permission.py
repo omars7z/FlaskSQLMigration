@@ -1,15 +1,15 @@
-'''from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Table, Column, Integer, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Table, Column, Integer, String, Text, ForeignKey
+from app.Models.base import BaseDBModel
 from app.Models.relations import roles_permissions
-from app.Models.base_model import BaseDBModel
 
-roles_permissions = Table(
+'''roles_permissions = Table(
     "roles_permissions",
     db.Model.metadata,
     Column('roles_id', Integer, ForeignKey('roles.id', ondelete="CASCADE"), primary_key=True),
     Column('permissions_id', Integer, ForeignKey('permissions.id', ondelete="CASCADE"), primary_key=True)
 ) 
-
+'''
 class Permission(BaseDBModel):
     
     __tablename__ = "permissions"
@@ -27,4 +27,4 @@ class Permission(BaseDBModel):
             "name": self.name,
             "description": self.description,
         }
-    '''
+    

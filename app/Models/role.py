@@ -1,16 +1,15 @@
-'''from app.Models.base_model import BaseDBModel
+from app.Models.base import BaseDBModel
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Text, Table, Column, Integer, ForeignKey
 from app.extensions import db
 from app.Models.relations import user_roles, roles_permissions
-from app.Models.base_model import BaseDBModel
-
+'''
 user_roles = Table(
     "user_roles",
     db.Model.metadata,
     Column('user_id', Integer, ForeignKey('users.id', ondelete="CASCADE"), primary_key=True),
     Column('roles_id', Integer, ForeignKey('roles.id', ondelete="CASCADE"), primary_key=True)
-) 
+) '''
 
 
 class Role(BaseDBModel):
@@ -28,4 +27,4 @@ class Role(BaseDBModel):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-        }'''
+        }

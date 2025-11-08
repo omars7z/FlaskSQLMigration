@@ -1,4 +1,3 @@
-'''
 
 from sqlalchemy import Table, Column, Integer, ForeignKey
 from app.extensions import db
@@ -15,4 +14,4 @@ roles_permissions = Table(
     db.Model.metadata,
     Column("role_id", Integer, ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True),
     Column("permission_id", Integer, ForeignKey("permissions.id", ondelete="CASCADE"), primary_key=True),
-)   '''
+)   
