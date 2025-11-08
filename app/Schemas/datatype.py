@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields, validates, ValidationError, post_load
-
+import re
+from app.Models.datatype import Datatype
 
 class DatatypeSchema(Schema):
     
@@ -16,15 +17,18 @@ class DatatypeSchema(Schema):
     class Meta:
         ordered = True
         unknown = 'EXCLUDE'
-    
-    @validates('name')
+
+    # --- NAME VALIDATION ---
+    @validates("name")
     def validate_name(self, value, **kwargs):
         if not value or not value.strip():
             raise ValidationError("Name cannot be empty")
-        
-    @validates('example')
+
+
+    # --- EXAMPLE VALIDATION ---
+    @validates("example")
     def validate_example(self, value, **kwargs):
-        """Validate example structure"""
+        """Validate example structure and flag consistency"""
         if value is None:
             return
         
@@ -33,13 +37,35 @@ class DatatypeSchema(Schema):
         
         for key, val in value.items():
             if val is not None and not isinstance(val, (str, int, float, bool)):
-                raise ValidationError(f"Invalid value type for key '{key}'. Must be string, number, boolean, or null")
-    
+                raise ValidationError(
+                    f"Invalid value type for key '{key}'. Must be string, number, boolean, or null"
+                )
+
+    # --- FLAG + EXAMPLE VALIDATION ---
     @post_load
     def process_data(self, data, **kwargs):
-        """Process data after validation"""
-        # Remove None values from example
-        if 'example' in data and data['example']:
-            data['example'] = {k: v for k, v in data['example'].items() if v is not None}
-        
+
+        flag_checks = {
+            "canDoMathOperation": r"[\+\-\*/\^%]",
+            "canDoLogicalOperation": r"\b(and|or|not|&|\|)\b",
+            "isIterable": r"\b(for|while|loop|iter|range)\b"
+        }
+
+        errors = []
+        example = data.get("example") or {}
+        txts = [str(v).lower() for v in example.values()] if isinstance(example, dict) else []
+
+        # validate flags and example 
+        for flag, pattern in flag_checks.items():
+            flag_val = data.get(flag, False)
+            matching_pattern = any(re.search(pattern, txt) for txt in txts)
+
+            if flag_val and not matching_pattern:
+                errors.append(f"{flag} is True but example doesn't contain related content")
+            if matching_pattern and not flag_val:
+                errors.append(f"{flag} is False but example contains related content")
+
+        if errors:
+            raise ValidationError({"details": errors})
+
         return data
