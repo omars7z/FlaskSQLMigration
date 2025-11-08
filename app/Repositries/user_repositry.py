@@ -49,8 +49,9 @@ class UserRepositry:
         
     def delete_user(self, id):
         user = User.query.filter_by(id=id).first()
-        user.set_flags({"isDeleted": True})
-        # db.session.delete(id)
+        # user.set_flags({"isDeleted": True})
+        db.session.delete(user)
+        print("DELETEDD userr")
         db.session.commit()
         return user
     

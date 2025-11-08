@@ -6,7 +6,6 @@ from app.Models.datatype import Datatype
 from app.Schemas.datatype import DatatypeSchema
 
 from app.Decorators.validation import validate_schema
-from app.Decorators.cpost_decorator import validate_post
 from app.Decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
 from app.Decorators.authentication import authenticate
@@ -33,8 +32,7 @@ class DatatypeResource(Resource):
         else:
             return error_res(f"invalid json request: {data}", 400)
                                  
-    @authenticate                   
-    @validate_post()
+    @authenticate              
     @validate_schema(DatatypeSchema)
     def post(self):
         data = request.get_json()
@@ -63,7 +61,7 @@ class DatatypeResource(Resource):
     def delete(self, id:int):
         dt = self.service.get_by_id(id)
         if not dt:
-            return error_res("Datatype with id={id} not found", 404)
+            return error_res(f"Datatype with id={id} not found", 404)
         if dt.creator_id != g.current_user.id:
             return error_res("You are not allowed to delete this datatype", 403)
         try:

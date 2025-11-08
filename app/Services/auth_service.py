@@ -17,4 +17,4 @@ class AuthService:
             return None 
         if not user.to_dict_flags().get("isActive"):
             return None
-        return create_access_token(user.id)
+        return create_access_token(user.id, 10)

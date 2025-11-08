@@ -5,12 +5,9 @@ from app.Schemas.password import SetPasswordSchema
 from app.Util.response import suc_res, error_res
 from app.Decorators.validation import validate_schema
 
-from flask import Blueprint, current_app, request
-from flask_restful import Api
-bp = Blueprint("api", __name__, url_prefix="/api")
-api = Api(bp)
+from flask import current_app, request
 
-class AuthenticateResource(Resource):
+class LoginResource(Resource):
     
     @property
     def service(self):
@@ -27,10 +24,10 @@ class AuthenticateResource(Resource):
         return suc_res({"msg": "Login successfully", "token": token}, 200)
 
 def register_auth_routes(api):
-    api.add_resource(AuthenticateResource, '/login')
+    api.add_resource(LoginResource, '/login')
 
     
-class PasswordResource(Resource):
+class SetPasswordResource(Resource):
     
     @property
     def service(self):
@@ -43,8 +40,8 @@ class PasswordResource(Resource):
         password = data.get("password")
         user = self.service.set_password(token, password)
         if not user:
-            return error_res("Invalid credintials: wrong sesion token", 401)
+            return error_res("Invalid credintials: wrong token", 401)
         return suc_res("password set succesfuly", 200)
     
 def register_password_routes(api):
-    api.add_resource(PasswordResource, '/set_password')
+    api.add_resource(SetPasswordResource, '/set_password')

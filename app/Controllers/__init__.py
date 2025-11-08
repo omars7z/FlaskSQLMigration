@@ -5,9 +5,11 @@ bp = Blueprint("api", __name__, url_prefix="/api")
 api = Api(bp)
 
 
-from app.Controllers import users, authenticate, datatype
+from app.Controllers import users, authenticate, datatype, role, permissions
 
 users.register_routes(api)
 authenticate.register_auth_routes(api)
 authenticate.register_password_routes(api)
 datatype.register_routes(api)
+role.register_routes(api)
+permissions.register_routes(api)

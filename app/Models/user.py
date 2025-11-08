@@ -5,7 +5,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
-# from app.Models.role import user_roles
+from app.Models.role import user_roles
 
 class User(BaseDBModel):
     __tablename__ = "users"
@@ -24,7 +24,7 @@ class User(BaseDBModel):
     time_created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
     datatypes= relationship("Datatype", back_populates="creator", foreign_keys="[Datatype.creator_id]")
-    # roles = relationship("Role", secondary=user_roles, back_populates="users")
+    roles = relationship("Role", secondary=user_roles, back_populates="users")
     
     def set_password(self, password):
         self.password = generate_password_hash(password)
