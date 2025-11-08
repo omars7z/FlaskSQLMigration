@@ -8,8 +8,12 @@ api = Api(bp)
 from app.Controllers import users, authenticate, datatype, role, permissions
 
 users.register_routes(api)
+datatype.register_routes(api)
+
 authenticate.register_auth_routes(api)
 authenticate.register_password_routes(api)
-datatype.register_routes(api)
-role.register_routes(api)
+
+role.register_role_routes(api)
+role.register_user_role_routes(api)
+
 permissions.register_routes(api)
