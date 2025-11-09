@@ -42,4 +42,5 @@ class User(BaseDBModel):
             "email": self.email,
             "flag": self.flag,
             "flags_map": self.to_dict_flags(),
+            "roles":[role.name for role in self.roles],
         }
