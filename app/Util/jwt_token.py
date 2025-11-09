@@ -5,9 +5,10 @@ from flask import current_app
 
 idle = 5
 
-def create_access_token(user_id, idle):
+def create_access_token(user, idle):
     payload = {
-        "user_id" : user_id,
+        "user_id" : user.id,
+        "user_email" : user.email,
         "expiry" : int((datetime.now(timezone.utc) + timedelta(minutes=idle)).timestamp()) #datetime(2025, 11, 3, 8, 0, 0 + timezone.utc+10mins) -> timestamp(float) -> int
     }
     
