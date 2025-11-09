@@ -31,7 +31,7 @@ class SetPasswordResource(Resource):
     
     @property
     def service(self):
-        return current_app.password_service
+        return current_app.auth_service
     
     @validate_schema(SetPasswordSchema)
     def post(self):
