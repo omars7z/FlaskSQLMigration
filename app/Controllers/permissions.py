@@ -16,7 +16,7 @@ class PermissionsResource(Resource):
     def service(self):
         return current_app.permissions_service
     
-    def get(self, id:int=None, filters=None):
+    def get(self, id:int=None, name:str=None):
         return
     
 
