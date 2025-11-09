@@ -7,7 +7,7 @@ from app.Util.response import error_res
 def auto_filter_method(model):
     def decorator(func):
         @wraps(func)
-        def wrapper(resource, *args, **kwargs):
+        def wrapper(*args, **kwargs):
             
             filters = {}
             query = model.query
@@ -15,16 +15,17 @@ def auto_filter_method(model):
             
             for key, val in list(args_dict.items()):
                 if hasattr(model, key):
-                    query = query.filter(getattr(model, key)==val)
+                    v = getattr(model, key)
+                    query = query.filter(v==val)
                     filters[key] = val
                     
-                elif key in model.flags_map:
+                elif hasattr(model, "flags_map") and key in model.flags_map:
                         filters[key] = val.lower() == "true"
                 else:
-                    return error_res(f"invalide params {key}", 400)
+                    return error_res(f"invalide params: {key}", 400)
                 
             kwargs['filters'] = filters
-            return func(resource, *args, **kwargs)
+            return func(*args, **kwargs)
                     
         return wrapper
     return decorator
