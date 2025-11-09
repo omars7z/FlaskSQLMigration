@@ -3,7 +3,6 @@ from app.Models.datatype import Datatype
 from app.extensions import db
 from app.Repositries.base_repositry import BaseRepositry
 from sqlalchemy import func
-from flask import request
 
 class DatatypeRepositry(BaseRepositry):
     

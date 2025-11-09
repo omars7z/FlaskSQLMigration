@@ -1,4 +1,5 @@
 from app.Models.user import User
+from app.Models.role import Role
 from app.extensions import db
 import secrets
 from sqlalchemy import func
@@ -10,7 +11,7 @@ class UserRepositry:
         return User.query.filter_by(id=id).first()
     
     def get_by_email(self, email):
-        return User.query.filter(func.lower(User.email) == email.lower()).first()
+        return User.query.filter(User.email == email).first()
     
     
     def get(self, filters: dict = None):
@@ -59,17 +60,8 @@ class UserRepositry:
         user = User.query.filter_by(token=token).first()
         if not user:
             return None
-        user.set_password(password) #model to base_model
+        user.set_password(password) 
         user.set_flags({"isActive":True})
         user.token = None
         db.session.commit()
         return user 
-    
-    def assign_role(self, id, role):
-        user = self.service.get_by_id(id)
-        role = User.query.filter_by(name=role).first()
-        if not role:
-            raise ValueError("role doesn't exist")
-        user.roles.append(role)
-        db.session.commit()
-        return user
