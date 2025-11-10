@@ -40,7 +40,7 @@ class UserResource(Resource):
             user = self.service.create_user(
                 name = validated_user["name"],
                 email = validated_user["email"],
-                current_user=g.current_user
+                # current_user=g.current_user
                 )
             return suc_res({"msg":"User created", "token":user.token}, 201)
         except PermissionError as e:
