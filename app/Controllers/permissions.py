@@ -88,26 +88,26 @@ class RolePermsionsResource(Resource):
     
     @authenticate
     @superadmin_required
-    def post(self, user_id: int, perm_id: int):
+    def post(self, role_id: int, perm_id: int):
         try:
-            perm = self.service.assign_permission(user_id, perm_id)
+            perm = self.service.assign_permission(role_id, perm_id)
             if not perm:
                 error_res("No perm found ", 404)
         except ValueError as e:
-            return error_res("No User or perm assigned ", 404)
+            return error_res("No role_id or perm assigned ", 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(perm.to_dict(), 201)
     
     @authenticate
     @superadmin_required
-    def delete(self, user_id: int, perm_id: int):
+    def delete(self, role_id: int, perm_id: int):
         try:
-            perm = self.service.remove_permission(user_id, perm_id)
+            perm = self.service.remove_permission(role_id, perm_id)
             if not perm:
-                return error_res("User or perm not found", 404)
+                return error_res("role_id or perm not found", 404)
         except ValueError as e:
-            return error_res("No User or perm assigned ", 404)
+            return error_res("No role_id or perm assigned ", 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(perm.to_dict(), 200)

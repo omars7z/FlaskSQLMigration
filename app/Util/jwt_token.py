@@ -3,7 +3,7 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from flask import current_app
 
-idle = 5
+idle = 15
 
 def create_access_token(user, idle):
     payload = {

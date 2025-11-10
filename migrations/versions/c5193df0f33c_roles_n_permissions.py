@@ -27,7 +27,7 @@ def upgrade() -> None:
             'roles',
             sa.Column('id', sa.Integer(), primary_key=True),
             sa.Column('name', sa.String(50), unique=True, nullable=False),
-            sa.Column('description', sa.Text(), nullable=False, server_default="0"),
+            sa.Column('description', sa.Text(), nullable=True, server_default="0"),
         )
 
         op.create_table(
@@ -36,13 +36,13 @@ def upgrade() -> None:
             sa.Column('name', sa.String(50), unique=True, nullable=False),
             sa.Column('resource', sa.String(50)),
             sa.Column('action', sa.String(50)),
-            sa.Column('description', sa.Text(), nullable=False, server_default="0"),
+            sa.Column('description', sa.Text(), nullable=True, server_default="0"),
         )
         
         op.create_table(
             'user_roles',
             sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id', ondelete="CASCADE")),
-            sa.Column('role_id', sa.Integer(), sa.ForeignKey('roles.id', ondelete="CASCADE")),
+            sa.Column('role_id', sa.Integer(), sa.ForeignKey('roles.id', ondelete="CASCADE"), nullable=False),
             sa.PrimaryKeyConstraint('user_id', 'role_id')
         )
 

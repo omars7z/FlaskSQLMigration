@@ -28,8 +28,6 @@ class User(BaseDBModel):
     
     def set_password(self, password):
         self.password = generate_password_hash(password)
-        """ <algorithm>:<hash function>:<iterations>$<salt>$<derived_key>
-         pbkdf2:sha256:260000$uGbprVjZ6EbgmFlD$41e5d5fda0f6b28ef0a3cbe56e"""
          
     def check_password(self, password):
         return check_password_hash(self.password, password)

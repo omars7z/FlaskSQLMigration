@@ -4,6 +4,7 @@ from app.Models.datatype import Datatype
 
 class DatatypeSchema(Schema):
     
+    id = fields.Int(dump_only=True)
     name = fields.String(required=True, validate=lambda x: len(x) <= 50)
     example = fields.Dict(required=False, allow_none=True)
     creator_id = fields.Integer(required=False, allow_none=True)
@@ -18,14 +19,12 @@ class DatatypeSchema(Schema):
         ordered = True
         unknown = 'EXCLUDE'
 
-    # --- NAME VALIDATION ---
     @validates("name")
     def validate_name(self, value, **kwargs):
         if not value or not value.strip():
             raise ValidationError("Name cannot be empty")
 
 
-    # --- EXAMPLE VALIDATION ---
     @validates("example")
     def validate_example(self, value, **kwargs):
         """Validate example structure and flag consistency"""
@@ -41,7 +40,7 @@ class DatatypeSchema(Schema):
                     f"Invalid value type for key '{key}'. Must be string, number, boolean, or null"
                 )
 
-    # --- FLAG + EXAMPLE VALIDATION ---
+
     @post_load
     def process_data(self, data, **kwargs):
 

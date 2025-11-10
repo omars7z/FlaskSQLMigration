@@ -12,11 +12,8 @@ class UserServices:
     def get(self, filters):
         return self.repo.get(filters)
         
-    def create_user(self, name, email, current_user):
-        if current_user and not current_user.to_dict_flags().get("isSuperAdmin"):
-            raise PermissionError("can't create user unless Super Admin")
+    def create_user(self, name, email):
         return self.repo.create_user(name, email)
       
-    
     def delete_user(self, id):
         return self.repo.delete_user(id)

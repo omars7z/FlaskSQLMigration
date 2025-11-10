@@ -17,4 +17,7 @@ class AuthService:
             return None 
         if not user.to_dict_flags().get("isActive"):
             return None
-        return create_access_token(user.id, 10)
+        return create_access_token(user, 30)
+    
+    def set_password(self, token, password):
+        return self.repo.set_password(token, password)

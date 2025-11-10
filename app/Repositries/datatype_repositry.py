@@ -1,8 +1,8 @@
 
-from app.Models.datatype import Datatype
-from app.extensions import db
-from app.Repositries.base_repositry import BaseRepositry
 from sqlalchemy import func
+from app.extensions import db
+from app.Models.datatype import Datatype
+from app.Repositries.base_repositry import BaseRepositry
 
 class DatatypeRepositry(BaseRepositry):
     
