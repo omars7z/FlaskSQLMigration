@@ -17,7 +17,7 @@ class PermissionsResource(Resource):
     def service(self):
         return current_app.permission_service
 
-    # @authenticate
+    @authenticate
     @auto_filter_method(Permission)
     def get(self, perm_id=None, filters=None):
         if perm_id is not None:
@@ -57,7 +57,7 @@ class PermissionsResource(Resource):
         
         data = request.get_json()
         try:
-            updated_perm = self.service.update_permission(perm, data)
+            updated_perm = self.service.update_permission(perm_id, data)
         except SQLAlchemyError as e:
             return error_res(f"Database error: {str(e)}", 500)
         return suc_res(updated_perm.to_dict(), 200)

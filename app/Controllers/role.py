@@ -17,13 +17,13 @@ class RoleResource(Resource):
     def service(self):
         return current_app.role_service
     
-    # @authenticate
+    @authenticate
     @auto_filter_method(Role)
-    def get(self, id=None, filters=None):
-        if id is not None:
-            data = self.service.get_by_id(id)
+    def get(self, role_id:int=None, filters=None):
+        if role_id is not None:
+            data = self.service.get_by_id(role_id)
             if not data:
-                return error_res(f"User with id={id} not found", 404)
+                return error_res(f"User with id={role_id} not found", 404)
             return suc_res(data.to_dict(), 200)
 
         data = self.service.get(filters)
@@ -49,7 +49,7 @@ class RoleResource(Resource):
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 201)
     
-    # @authenticate
+    @authenticate
     @validate_schema(RoleSchema)
     def put(self, role_id:int):
         data = request.get_json()
