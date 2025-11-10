@@ -47,10 +47,7 @@ class DatatypeRepositry(BaseRepositry):
         db.session.commit()
         return dt
 
-    def update(self, id, data: dict):
-        dt = self.get_by_id(id)
-        if not dt:
-            return None
+    def update(self, dt, data: dict):
 
         flag_fields = {k: data.pop(k) for k in list(data.keys()) if k in Datatype.flags_map}
         if flag_fields:
@@ -64,7 +61,6 @@ class DatatypeRepositry(BaseRepositry):
 
     def delete(self, obj):
         obj.set_flags({"isDeleted":True})
-        print("DELETEDD this")
         # db.session.delete(obj)
         db.session.commit()
         return obj

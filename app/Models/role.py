@@ -27,4 +27,12 @@ class Role(BaseDBModel):
             "id": self.id,
             "name": self.name,
             "description": self.description,
+            "permissions": [
+                {
+                    "perm id" : perm.id,
+                    "name" : perm.name,
+                    "resource": perm.resource,
+                    "action": perm.action,
+                } for perm in self.permissions
+            ]
         }

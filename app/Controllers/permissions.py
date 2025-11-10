@@ -50,14 +50,12 @@ class PermissionsResource(Resource):
     @authenticate
     @superadmin_required
     @validate_schema(PermissionSchema)
-    def put(self, perm_id: int):
-        perm = self.service.get_by_id(perm_id)
-        if not perm:
-            return error_res(f"Permission with id={perm_id} not found", 404)
-        
+    def put(self, perm_id: int):        
         data = request.get_json()
         try:
             updated_perm = self.service.update_permission(perm_id, data)
+        except ValueError as e:
+            return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res(f"Database error: {str(e)}", 500)
         return suc_res(updated_perm.to_dict(), 200)
@@ -70,6 +68,8 @@ class PermissionsResource(Resource):
             return error_res(f"Permission with id={perm_id} not found", 404)
         try:
             self.service.delete_permission(perm_id)
+        except ValueError as e:
+            return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res(f"Database error: {str(e)}", 500)
         return suc_res(f"Deleted permission id: {perm_id}", 200)
@@ -94,7 +94,7 @@ class RolePermsionsResource(Resource):
             if not perm:
                 error_res("No perm found ", 404)
         except ValueError as e:
-            return error_res("No role_id or perm assigned ", 404)
+            return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(perm.to_dict(), 201)
@@ -107,10 +107,10 @@ class RolePermsionsResource(Resource):
             if not perm:
                 return error_res("role_id or perm not found", 404)
         except ValueError as e:
-            return error_res("No role_id or perm assigned ", 404)
+            return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(perm.to_dict(), 200)
+        return suc_res(f"Removed perm id:{perm_id} from role id: {role_id}", 200)
 
 
 def register_role_perm_routes(api):

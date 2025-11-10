@@ -28,18 +28,13 @@ class PermissionRepositry:
     
     def update_permission(self, id, data):
         dt = self.get_by_id(id)
-        if not dt:
-            return None
-
         for key, value in data.items():
             setattr(dt, key, value)
         db.session.commit()
         return dt
     
     def delete_permission(self, id):
-        permission = permission.query.filter_by(id=id).first()
-        if permission is None:
-            return None
+        permission = Permission.query.filter_by(id=id).first()
         db.session.delete(permission)
         db.session.commit()
         return permission
@@ -51,7 +46,6 @@ class PermissionRepositry:
         if role not in permission.roles:
             permission.roles.append(role)
             db.session.commit()
-            
         return role
     
     def remove_permission(self, role_id, perm_id):

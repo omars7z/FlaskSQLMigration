@@ -6,7 +6,7 @@ from app.Helpers.registry import register
 class AuthService:
     
     def __init__(self, repository):
-        self.repo = repository
+        self.repo = repository.get("User")
         
     def login(self, email, password):
         user = self.repo.get_by_email(email)

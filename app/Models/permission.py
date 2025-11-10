@@ -14,6 +14,10 @@ class Permission(BaseDBModel):
     
     __tablename__ = "permissions"
     
+    '''flags: Mapped[dict] = {
+        "isActive": False,
+    }'''
+    
     id: Mapped[int] = mapped_column(Integer(), primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     resource: Mapped[str] = mapped_column(String(50))

@@ -40,5 +40,18 @@ class User(BaseDBModel):
             "email": self.email,
             "flag": self.flag,
             "flags_map": self.to_dict_flags(),
-            "roles":[role.name for role in self.roles],
+            "roles":[
+                {
+                    "role id" : role.id,
+                    "name": role.name, 
+                    "permissions": [{
+                        "name" : perm.name,
+                        "resource" : perm.resource,
+                        "action" : perm.action,
+                        "description": perm.description
+                    }
+                    for perm in role.permissions],
+                }
+            for role in self.roles],
         }
+            

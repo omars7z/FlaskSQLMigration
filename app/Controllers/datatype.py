@@ -58,17 +58,17 @@ class DatatypeResource(Resource):
         return suc_res(dt.to_dict(), 200)
     
     @authenticate
-    def delete(self, id:int):
-        dt = self.service.get_by_id(id)
-        if not dt:
-            return error_res(f"Datatype with id={id} not found", 404)
-        if dt.creator_id != g.current_user.id:
-            return error_res("You are not allowed to delete this datatype", 403)
+    def delete(self, id: int):
         try:
-            self.service.delete(dt)
+            dt = self.service.delete(id)
+            return suc_res({"msg": f"Deleted datatype '{dt.name}'"}, 200)
+        except PermissionError as e:
+            return error_res(str(e), 403)
+        except ValueError as e:
+            return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res({"msg": f"Deleted datatype '{dt.name}"}, 200)
 
+        
 def register_routes(api):
     api.add_resource(DatatypeResource, '/datatype', '/datatype/<int:id>')
