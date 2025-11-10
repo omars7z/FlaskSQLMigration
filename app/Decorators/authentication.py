@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import g, request
-from app.Util.response import error_res, suc_res
+from app.Util.response import error_res
 from app.Util.jwt_token import decode_access_token
 from app.Models.user import User
 
@@ -10,7 +10,7 @@ def authenticate(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         
-        auth_header = request.headers.get("Authorization") #AAuthorization Berear: fuihreoafoieug32j4n54ibkbkjbfr5...
+        auth_header = request.headers.get("Authorization") #AAuthorization Berear: fuihreoafoieug32j4n545...
         if not auth_header or not auth_header.startswith("Bearer "):
             return error_res("missing or wrong auth header", 401)
         

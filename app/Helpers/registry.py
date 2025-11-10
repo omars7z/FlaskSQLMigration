@@ -1,6 +1,6 @@
 service_registry = {}
 
-#decorator
+#decorator, a service can have multiple repos
 def register(name:str, repo:str = None):
     def wrapper(cls):
         service_registry[name] = (cls, repo)
