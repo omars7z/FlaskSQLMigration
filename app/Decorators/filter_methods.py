@@ -19,7 +19,7 @@ def auto_filter_method(model):
                     query = query.filter(v==val)
                     filters[key] = val
                     
-                elif hasattr(model, "flags_map") and key in model.flags_map:
+                elif hasattr(model, "flags") and key in model.flags:
                         filters[key] = val.lower() == "true"
                 else:
                     return error_res(f"invalide params: {key}", 400)

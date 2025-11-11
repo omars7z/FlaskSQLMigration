@@ -27,6 +27,7 @@ def upgrade() -> None:
             'roles',
             sa.Column('id', sa.Integer(), primary_key=True),
             sa.Column('name', sa.String(50), unique=True, nullable=False),
+            sa.Column('flags', sa.Integer(), nullable=False, server_default="0"),
             sa.Column('description', sa.Text(), nullable=True, server_default="0"),
         )
 
@@ -36,21 +37,24 @@ def upgrade() -> None:
             sa.Column('name', sa.String(50), unique=True, nullable=False),
             sa.Column('resource', sa.String(50)),
             sa.Column('action', sa.String(50)),
+            sa.Column('flags', sa.Integer(), nullable=False, server_default="0"),
             sa.Column('description', sa.Text(), nullable=True, server_default="0"),
         )
         
         op.create_table(
             'user_roles',
+            sa.Column('id', sa.Integer(), primary_key=True),
             sa.Column('user_id', sa.Integer(), sa.ForeignKey('users.id', ondelete="CASCADE")),
             sa.Column('role_id', sa.Integer(), sa.ForeignKey('roles.id', ondelete="CASCADE"), nullable=False),
-            sa.PrimaryKeyConstraint('user_id', 'role_id')
+            sa.UniqueConstraint('user_id', 'role_id', name="uq_user_roles")
         )
 
         op.create_table(
             'roles_permissions',
+            sa.Column('id', sa.Integer(), primary_key=True),
             sa.Column('role_id', sa.Integer(), sa.ForeignKey('roles.id', ondelete="CASCADE")),
             sa.Column('permission_id', sa.Integer(), sa.ForeignKey('permissions.id', ondelete="CASCADE")),
-            sa.PrimaryKeyConstraint('role_id', 'permission_id')
+            sa.UniqueConstraint('role_id', 'permission_id', name="uq_roles_permissions")
         )
 
         
@@ -65,7 +69,7 @@ def upgrade() -> None:
             [
                 {
                     "name": "admin",
-                    "description": "Administrator w all datatype permissions",
+                    "description": "Administrator w all dtypes permissions",
                 },
                 {
                     "name": "editor",
@@ -73,7 +77,7 @@ def upgrade() -> None:
                 },
                 {
                     "name": "viewer",
-                    "description": "Read only datatypes",
+                    "description": "Read only dtypes",
                 }
             ]
         )
@@ -90,16 +94,16 @@ def upgrade() -> None:
             sa.insert(permissions_table),
             [
                 {
-                    "name": "datatype:read",
+                    "name": "dt:read",
                     "resource": "datatype",
                     "action": "read",
-                    "description": "Perm to view datatypes",
+                    "description": "Perm to view dts",
                 },
                 {
-                    "name": "datatype:delete",
+                    "name": "dt:delete",
                     "resource": "datatype",
                     "action": "delete",
-                    "description": "Perm to delete any datatype",
+                    "description": "Perm to delete any dt",
                 },
             ],
         )

@@ -20,4 +20,7 @@ class AuthService:
         return create_access_token(user, 30)
     
     def set_password(self, token, password):
-        return self.repo.set_password(token, password)
+        user = self.repo.set_password(token, password)
+        if not user:
+            raise ValueError("Wrong credinitials")
+        return user

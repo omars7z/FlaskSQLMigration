@@ -15,7 +15,7 @@ class DatatypeRepositry(BaseRepositry):
         
     def get(self, filters: dict = None):
         filters = filters or {}
-        flags_keys = list(Datatype.flags_map.keys())
+        flags_keys = list(Datatype.flags.keys())
         query = Datatype.query.filter(Datatype.flag.op('&')(16) == 0)  # skip deleted
 
         for key, val in filters.items():
@@ -27,7 +27,7 @@ class DatatypeRepositry(BaseRepositry):
                 else:
                     query = query.filter(col == val)
 
-            elif key in Datatype.flags_map:
+            elif key in Datatype.flags:
                 bit_val = 1 << flags_keys.index(key)
                 if val:
                     query = query.filter((Datatype.flag.op('&')(bit_val)) == bit_val)
@@ -39,7 +39,7 @@ class DatatypeRepositry(BaseRepositry):
 
     def create(self, data: dict):
         # take flags from input or use defaults
-        flag_fields = {k: data.pop(k, Datatype.flags_map[k]) for k in Datatype.flags_map.keys()}
+        flag_fields = {k: data.pop(k, Datatype.flags[k]) for k in Datatype.flags.keys()}
         
         dt = Datatype(**data)  # destructure abd set name, example, ...
         dt.set_flags(flag_fields)
@@ -49,7 +49,7 @@ class DatatypeRepositry(BaseRepositry):
 
     def update(self, dt, data: dict):
 
-        flag_fields = {k: data.pop(k) for k in list(data.keys()) if k in Datatype.flags_map}
+        flag_fields = {k: data.pop(k) for k in list(data.keys()) if k in Datatype.flags}
         if flag_fields:
             dt.set_flags(flag_fields)
 

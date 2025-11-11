@@ -1,7 +1,9 @@
-from app.Models.user import User
 from app.extensions import db
 import secrets
 from sqlalchemy import func
+from app.Models.user import User
+from app.Models.role import Role
+from app.Mappers.user_mapper import UserMapper
 
 class UserRepositry:
     
@@ -15,7 +17,7 @@ class UserRepositry:
     
     def get(self, filters: dict = None):
         filters = filters or {}
-        flags_keys = list(User.flags_map.keys())
+        flags_keys = list(User.flags.keys())
         query = User.query.filter()  # skip deleted
 
         for key, val in filters.items():
@@ -27,7 +29,7 @@ class UserRepositry:
                 else:
                     query = query.filter(col == val)
 
-            elif key in User.flags_map:
+            elif key in User.flags:
                 bit_val = 1 << flags_keys.index(key)
                 if val:
                     query = query.filter((User.flag.op('&')(bit_val)) == bit_val)
@@ -49,18 +51,42 @@ class UserRepositry:
         
     def delete_user(self, id):
         user = User.query.filter_by(id=id).first()
-        # user.set_flags({"isDeleted": True})
         db.session.delete(user)
-        print("DELETEDD userr")
         db.session.commit()
         return user
     
     def set_password(self, token, password):
         user = User.query.filter_by(token=token).first()
-        if not user:
+        if not user:    #wrong http
             return None
         user.set_password(password) 
         user.set_flags({"isActive":True})
         user.token = None
         db.session.commit()
         return user 
+    
+    def assign_role(self, user_id, role_id):
+        role = Role.query.filter_by(id=role_id).first()
+        user = self.get_by_id(user_id)
+        
+        if not user or not role:
+            # raise ValueError() 
+            return None
+        if role not in user.roles:
+            user.roles.append(role)
+            db.session.commit()
+            
+        return UserMapper.to_dict(user)
+    
+    def remove_role(self, user_id, role_id):
+        role = Role.query.filter_by(id=role_id).first()
+        user = self.get_by_id(user_id)
+        if not user or not role:
+            return None
+        if role in user.roles:
+            user.roles.remove(role) 
+            db.session.commit()
+        else:
+            None
+        return user
+        

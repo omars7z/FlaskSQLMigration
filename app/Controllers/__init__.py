@@ -14,7 +14,9 @@ authenticate.register_auth_routes(api)
 authenticate.register_password_routes(api)
 
 role.register_role_routes(api)
-role.register_user_role_routes(api)
+users.register_user_role_routes(api)
+# role.register_user_role_routes(api)
 
 permissions.register_perm_routes(api)
-permissions.register_role_perm_routes(api)
+# permissions.register_role_perm_routes(api)
+role.register_role_perm_routes(api)

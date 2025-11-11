@@ -38,10 +38,11 @@ class SetPasswordResource(Resource):
         data = request.validated_data 
         token = data.get("token")
         password = data.get("password")
-        user = self.service.set_password(token, password)
-        if not user:
-            return error_res("Invalid credintials: wrong token", 401)
-        return suc_res("password set succesfuly", 200)
+        try:
+            self.service.set_password(token, password)
+            return suc_res("password set succesfuly", 200)
+        except ValueError as e:    
+            return error_res(str(e), 401)
     
 def register_password_routes(api):
     api.add_resource(SetPasswordResource, '/set_password')

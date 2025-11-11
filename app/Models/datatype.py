@@ -3,7 +3,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, Dict, Any
 from sqlalchemy import Integer, String, JSON, DateTime, ForeignKey
 from datetime import datetime
-from app.Models.user import User
 
 
 class Datatype(BaseDBModel):

@@ -80,39 +80,3 @@ def register_perm_routes(api):
     api.add_resource(PermissionsResource, '/permission', '/permission/<int:perm_id>')
     
     
-class RolePermsionsResource(Resource):
-    
-    @property
-    def service(self):
-        return current_app.permission_service
-    
-    @authenticate
-    @superadmin_required
-    def post(self, role_id: int, perm_id: int):
-        try:
-            perm = self.service.assign_permission(role_id, perm_id)
-            if not perm:
-                error_res("No perm found ", 404)
-        except ValueError as e:
-            return error_res(str(e), 404)
-        except SQLAlchemyError as e:
-            return error_res("Database error: " + str(e), 500)
-        return suc_res(perm.to_dict(), 201)
-    
-    @authenticate
-    @superadmin_required
-    def delete(self, role_id: int, perm_id: int):
-        try:
-            perm = self.service.remove_permission(role_id, perm_id)
-            if not perm:
-                return error_res("role_id or perm not found", 404)
-        except ValueError as e:
-            return error_res(str(e), 404)
-        except SQLAlchemyError as e:
-            return error_res("Database error: " + str(e), 500)
-        return suc_res(f"Removed perm id:{perm_id} from role id: {role_id}", 200)
-
-
-def register_role_perm_routes(api):
-    api.add_resource(RolePermsionsResource, '/role/<int:role_id>/permission', '/role/<int:role_id>/permission/<int:perm_id>') #IMPORTANT
-    

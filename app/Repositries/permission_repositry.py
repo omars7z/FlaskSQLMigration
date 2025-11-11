@@ -7,9 +7,7 @@ class PermissionRepositry:
     def get_by_id(self, id):
         return Permission.query.filter_by(id=id).first() #first_or_404
     
-    
-    def get(self, filters:dict = None):
-        
+    def get(self, filters:dict = None):       
         filters = filters or {}
         query = Permission.query
 

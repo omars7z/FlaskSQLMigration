@@ -1,6 +1,8 @@
 from app.Models.role import Role
 from app.Models.user import User
 from app.extensions import db
+from app.Mappers.role_mapper import RoleMapper
+
 
 class RoleRepositry():
     
@@ -41,28 +43,23 @@ class RoleRepositry():
         db.session.delete(role)
         db.session.commit()
         return role
-    
-    def assign_role(self, user_id, role_id):
-        user = User.query.filter_by(id=user_id).first()
-        role = self.get_by_id(role_id)
-        
-        if not user or not role:
-            raise ValueError() 
-        if user not in role.users:
-            role.users.append(user)
-            db.session.commit()
             
-        return user
-    
-    def remove_role(self, user_id, role_id):
-        user = User.query.filter_by(id=user_id).first()
-        role = self.get_by_id(role_id)
-        if not user or not role:
-            return None
-        if user in role.users:
-            role.users.remove(user) 
-            db.session.commit()
-        else:
-            None
-        return user
+    def assign_permission(self, role_id, perm_id):
+        role = Role.query.filter_by(id=role_id).first()
+        permission = self.get_by_id(perm_id)
         
+        if role not in permission.roles:
+            permission.roles.append(role)
+            db.session.commit()
+        return RoleMapper.to_dict()
+    
+    def remove_permission(self, role_id, perm_id):
+        role = Role.query.filter_by(id=role_id).first()
+        permission = self.get_by_id(perm_id)
+        
+        if permission in role.permissions:
+            role.permissions.remove(permission) 
+            db.session.commit()
+        
+        return role
+    
