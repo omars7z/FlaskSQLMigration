@@ -9,7 +9,7 @@ from app.Models.user import User
 class Datatype(BaseDBModel):
     __tablename__ = "datatypes"
 
-    flags_map: Dict[str, bool] = {
+    flags: Dict[str, bool] = {
         "cantBeDeleted": False,
         "canDoMathOperation": False,
         "canDoLogicalOperation": True,
@@ -35,6 +35,6 @@ class Datatype(BaseDBModel):
             "example": self.example,
             "time_created": self.time_created.isoformat(),
             "flag": self.flag,
-            "flags_map": self.to_dict_flags(),
+            "flags": self.to_dict_flags(),
             "creator_id": self.creator_id,
         }

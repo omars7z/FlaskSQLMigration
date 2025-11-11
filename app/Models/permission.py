@@ -3,20 +3,13 @@ from sqlalchemy import Table, Column, Integer, String, Text, ForeignKey
 from app.Models.base import BaseDBModel
 from app.Models.relations import roles_permissions
 
-'''roles_permissions = Table(
-    "roles_permissions",
-    db.Model.metadata,
-    Column('roles_id', Integer, ForeignKey('roles.id', ondelete="CASCADE"), primary_key=True),
-    Column('permissions_id', Integer, ForeignKey('permissions.id', ondelete="CASCADE"), primary_key=True)
-) 
-'''
 class Permission(BaseDBModel):
     
     __tablename__ = "permissions"
     
-    '''flags: Mapped[dict] = {
+    flags: Mapped[dict] = {
         "isActive": False,
-    }'''
+    }
     
     id: Mapped[int] = mapped_column(Integer(), primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)

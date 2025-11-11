@@ -10,7 +10,7 @@ from app.Models.role import user_roles
 class User(BaseDBModel):
     __tablename__ = "users"
 
-    flags_map = {
+    flags = {
         "isActive": False,
         "isSuperAdmin": False,
     }
@@ -32,26 +32,3 @@ class User(BaseDBModel):
     def check_password(self, password):
         return check_password_hash(self.password, password)
     
-    
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "email": self.email,
-            "flag": self.flag,
-            "flags_map": self.to_dict_flags(),
-            "roles":[
-                {
-                    "role id" : role.id,
-                    "name": role.name, 
-                    "permissions": [{
-                        "name" : perm.name,
-                        "resource" : perm.resource,
-                        "action" : perm.action,
-                        "description": perm.description
-                    }
-                    for perm in role.permissions],
-                }
-            for role in self.roles],
-        }
-            
