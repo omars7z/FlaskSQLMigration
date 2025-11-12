@@ -74,10 +74,8 @@ class UserRoleResource(Resource):
     def post(self, user_id: int, role_id: int):
         try:
             user = self.service.assign_role(user_id, role_id)
-            if not user:
-                error_res("No role found ", 404)
         except ValueError as e:
-            return error_res("No User or Role assigned ", 404)
+            return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(user, 201)
@@ -87,10 +85,8 @@ class UserRoleResource(Resource):
     def delete(self, user_id: int, role_id: int):
         try:
             role = self.service.remove_role(user_id, role_id)
-            if not role:
-                return error_res("User or Role not found", 404)
         except ValueError as e:
-            return error_res("No User or Role assigned ", 404)
+            return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(role, 200)

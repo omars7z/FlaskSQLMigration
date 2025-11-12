@@ -9,6 +9,7 @@ from app.Decorators.validation import validate_schema
 from app.Decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
 from app.Decorators.authentication import authenticate
+from app.Decorators.authorization import access_required
 
 class DatatypeResource(Resource):
     @property
@@ -17,6 +18,7 @@ class DatatypeResource(Resource):
     
     @authenticate
     @auto_filter_method(Datatype)
+    @access_required(resource="datatype", action="read")
     def get(self, id = None, filters = None):
         if id is not None:
             data = self.service.get_by_id(id)
@@ -34,6 +36,7 @@ class DatatypeResource(Resource):
                                  
     @authenticate              
     @validate_schema(DatatypeSchema)
+    @access_required(resource="datatype", action="create")
     def post(self):
         data = request.get_json()
         creator = g.current_user
@@ -46,6 +49,7 @@ class DatatypeResource(Resource):
     
     @authenticate
     @validate_schema(DatatypeSchema)
+    @access_required(resource="datatype", action="update")
     def put(self, id:int):
         data = request.get_json()
         dt = self.service.get_by_id(id)
@@ -58,6 +62,7 @@ class DatatypeResource(Resource):
         return suc_res(dt.to_dict(), 200)
     
     @authenticate
+    @access_required(resource="datatype", action="delete")
     def delete(self, id: int):
         try:
             dt = self.service.delete(id)

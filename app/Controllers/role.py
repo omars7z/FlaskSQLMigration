@@ -53,11 +53,10 @@ class RoleResource(Resource):
     @validate_schema(RoleSchema)
     def put(self, role_id:int):
         data = request.get_json()
-        dt = self.service.get_by_id(role_id)
-        if not dt:
-            return error_res(f"Role with role_id={role_id} not found", 404)
         try:
             dt = self.service.update_role(role_id, data) 
+        except ValueError as e:
+            return error_res(str(e), 401)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 200)
@@ -70,7 +69,7 @@ class RoleResource(Resource):
             error_res("No id found ", 404)
         try:                
             self.service.delete_role(role_id)
-        except PermissionError as e:
+        except ValueError as e:
             return error_res(str(e), 403)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
@@ -98,7 +97,7 @@ class RolePermsionsResource(Resource):
             return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(perm.to_dict(), 201)
+        return suc_res(perm, 201)
     
     @authenticate
     @superadmin_required
