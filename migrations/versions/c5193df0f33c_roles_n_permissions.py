@@ -27,7 +27,7 @@ def upgrade() -> None:
             'roles',
             sa.Column('id', sa.Integer(), primary_key=True),
             sa.Column('name', sa.String(50), unique=True, nullable=False),
-            sa.Column('flags', sa.Integer(), nullable=False, server_default="0"),
+            sa.Column('flag', sa.Integer(), nullable=False, server_default="0"),
             sa.Column('description', sa.Text(), nullable=True, server_default="0"),
         )
 
@@ -37,7 +37,7 @@ def upgrade() -> None:
             sa.Column('name', sa.String(50), unique=True, nullable=False),
             sa.Column('resource', sa.String(50)),
             sa.Column('action', sa.String(50)),
-            sa.Column('flags', sa.Integer(), nullable=False, server_default="0"),
+            sa.Column('flag', sa.Integer(), nullable=False, server_default="0"),
             sa.Column('description', sa.Text(), nullable=True, server_default="0"),
         )
         
@@ -67,6 +67,10 @@ def upgrade() -> None:
         session.execute(
             sa.insert(roles_table),
             [
+                {
+                    "name": "superAdmin",
+                    "description": "All permissions",
+                },
                 {
                     "name": "admin",
                     "description": "Administrator w all dtypes permissions",
@@ -98,6 +102,16 @@ def upgrade() -> None:
                     "resource": "datatype",
                     "action": "read",
                     "description": "Perm to view dts",
+                },{
+                    "name": "dt:create",
+                    "resource": "datatype",
+                    "action": "create",
+                    "description": "Perm to create any dt",
+                },{
+                    "name": "dt:update",
+                    "resource": "datatype",
+                    "action": "update",
+                    "description": "Perm to change any dt",
                 },
                 {
                     "name": "dt:delete",
