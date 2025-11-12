@@ -19,7 +19,7 @@ class DatatypeService:
     def update(self, id, data: dict):
         dt = self.get_by_id(id)
         if not dt:
-            return None
+            return ValueError(f"datatype id {id} not found")
         return self.repo.update(dt, data)  
 
     def delete(self, id):

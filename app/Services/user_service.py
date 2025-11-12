@@ -10,12 +10,10 @@ class UserServices:
 
         
     def get_by_id(self, user_id: int):
-        user = self.user.get_by_id(user_id)
-        return UserMapper.to_dict(user) if user else None
+        return self.user.get_by_id(user_id)
     
     def get(self, filters):
-        user = self.user.get(filters)
-        return UserMapper.to_list(user) if user else []
+        return self.user.get(filters)
         
     def create_user(self, name, email):
         return self.user.create_user(name, email)
