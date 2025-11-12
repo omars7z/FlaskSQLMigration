@@ -26,12 +26,4 @@ class PermissionServices:
             raise ValueError(f"Permission with id={perm_id} not found")
         return self.perm_repo.delete_permission(perm_id)
 
-    def assign_permission(self, role_id, perm_id):
-        if not self.role_repo.get_by_id(role_id) or not self.perm_repo.get_by_id(perm_id): 
-            raise ValueError("No role_id or perm assigned ")
-        return self.perm_repo.assign_permission(role_id, perm_id)
     
-    def remove_permission(self, role_id, perm_id):
-        if not self.role_repo.get_by_id(role_id) or not self.perm_repo.get_by_id(perm_id):  
-            raise ValueError("Couldn't assign role_id or perm_id")
-        return self.perm_repo.remove_permission(role_id, perm_id)
