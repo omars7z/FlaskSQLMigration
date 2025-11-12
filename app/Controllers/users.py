@@ -3,6 +3,7 @@ from flask import current_app, request, g
 from sqlalchemy.exc import SQLAlchemyError
 from app.Schemas.user import UserCreateSchema
 from app.Models.user import User
+from app.Mappers.user_mapper import UserMapper
 
 from app.Util.response import suc_res, error_res
 from app.Decorators.filter_methods import auto_filter_method
@@ -78,7 +79,7 @@ class UserRoleResource(Resource):
             return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(user, 201)
+        return suc_res(UserMapper.to_dict(), 201)
     
     @authenticate
     @superadmin_required
@@ -89,7 +90,7 @@ class UserRoleResource(Resource):
             return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(role, 200)
+        return suc_res(UserMapper.to_dict(), 200)
 
     
 def register_user_role_routes(api):

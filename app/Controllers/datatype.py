@@ -52,11 +52,10 @@ class DatatypeResource(Resource):
     @access_required(resource="datatype", action="update")
     def put(self, id:int):
         data = request.get_json()
-        dt = self.service.get_by_id(id)
-        if not dt:
-            return error_res(f"Datatype with id={id} not found", 404)
         try:
-            dt = self.service.update(id, data) #here
+            dt = self.service.update(id, data) 
+        except ValueError as e:
+            return error_res(str(e), 500)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
         return suc_res(dt.to_dict(), 200)
@@ -67,8 +66,6 @@ class DatatypeResource(Resource):
         try:
             dt = self.service.delete(id)
             return suc_res({"msg": f"Deleted datatype '{dt.name}'"}, 200)
-        except PermissionError as e:
-            return error_res(str(e), 403)
         except ValueError as e:
             return error_res(str(e), 404)
         except SQLAlchemyError as e:

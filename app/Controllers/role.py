@@ -64,9 +64,6 @@ class RoleResource(Resource):
     @authenticate
     @superadmin_required
     def delete(self, role_id : int):
-        data = self.service.get_by_id(role_id)
-        if not data:
-            error_res("No id found ", 404)
         try:                
             self.service.delete_role(role_id)
         except ValueError as e:
@@ -90,22 +87,18 @@ class RolePermsionsResource(Resource):
     @superadmin_required
     def post(self, role_id: int, perm_id: int):
         try:
-            perm = self.service.assign_permission(role_id, perm_id)
-            if not perm:
-                error_res("No perm found ", 404)
+            role = self.service.assign_permission(role_id, perm_id)
         except ValueError as e:
             return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(perm, 201)
+        return suc_res(role, 201)
     
     @authenticate
     @superadmin_required
     def delete(self, role_id: int, perm_id: int):
         try:
-            perm = self.service.remove_permission(role_id, perm_id)
-            if not perm:
-                return error_res("role_id or perm not found", 404)
+            self.service.remove_permission(role_id, perm_id)
         except ValueError as e:
             return error_res(str(e), 404)
         except SQLAlchemyError as e:

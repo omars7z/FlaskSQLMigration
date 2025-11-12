@@ -63,9 +63,6 @@ class PermissionsResource(Resource):
     @authenticate
     @superadmin_required
     def delete(self, perm_id: int):
-        perm = self.service.get_by_id(perm_id)
-        if not perm:
-            return error_res(f"Permission with id={perm_id} not found", 404)
         try:
             self.service.delete_permission(perm_id)
         except ValueError as e:
