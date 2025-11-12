@@ -15,6 +15,7 @@ class Permission(BaseDBModel):
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     resource: Mapped[str] = mapped_column(String(50))
     action: Mapped[str] = mapped_column(String(50))
+    flag: Mapped[int] = mapped_column(Integer, default=0)
     description: Mapped[str] = mapped_column(Text)
     
     roles = relationship("Role", secondary=roles_permissions, back_populates="permissions")

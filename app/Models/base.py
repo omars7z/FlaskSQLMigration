@@ -31,4 +31,8 @@ class BaseDBModel(db.Model):
                 else:
                     val &= ~(1 << i)
         setattr(self, "flag", val)
+        db.session.commit()
         return val
+
+    def get_permissions(self):
+        pass

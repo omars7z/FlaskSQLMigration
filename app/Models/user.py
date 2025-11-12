@@ -32,3 +32,10 @@ class User(BaseDBModel):
     def check_password(self, password):
         return check_password_hash(self.password, password)
     
+    def get_permissions(self):
+        permissions = set()
+        for role in self.roles:
+            for perm in role.permissions:
+                permissions.add(perm)
+        return list(permissions)
+    
