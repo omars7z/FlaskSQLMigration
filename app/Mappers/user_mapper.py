@@ -1,10 +1,8 @@
-from app.Models.user import User
-from typing import Dict, Any, List
 
 class UserMapper:
 
     @staticmethod
-    def to_dict(user: User) -> Dict[str, Any]:
+    def to_dict(user):
         if not user:
             return None
 
@@ -34,6 +32,6 @@ class UserMapper:
         }
 
     @staticmethod
-    def to_list(users: List[User]) -> List[Dict[str, Any]]:
+    def to_list(users):
         return [UserMapper.to_dict(user) for user in users]
 

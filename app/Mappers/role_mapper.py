@@ -1,10 +1,8 @@
-from typing import List, Dict, Any
-from app.Models.role import Role
 
 class RoleMapper:
 
     @staticmethod
-    def to_dict(role: Role) -> Dict[str, Any]:
+    def to_dict(role):
         if not role:
             return None
 
@@ -21,17 +19,11 @@ class RoleMapper:
                     "description": getattr(perm, "description", None),
                 }
                 for perm in role.permissions
-            ],
-            "users": [
-                {
-                    "id": user.id,
-                    "name": user.name,
-                    "email": user.email
-                }
-                for user in getattr(role, "users", [])
             ]
         }
 
     @staticmethod
-    def to_list(roles: List[Role]) -> List[Dict[str, Any]]:
+    def to_list(roles):
+        if not roles:
+            return []
         return [RoleMapper.to_dict(role) for role in roles]
