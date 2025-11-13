@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Table, Column, Integer, String, Text, ForeignKey
+from sqlalchemy import Integer, String, Text
 from app.Models.base import BaseDBModel
 from app.Models.relations import roles_permissions
 
@@ -20,12 +20,4 @@ class Permission(BaseDBModel):
     
     roles = relationship("Role", secondary=roles_permissions, back_populates="permissions")
     
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "resource": self.resource,
-            "actions": self.action,
-            "description": self.description,
-        }
     

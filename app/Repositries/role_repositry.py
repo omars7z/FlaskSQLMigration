@@ -1,8 +1,7 @@
 from app.Models.role import Role
-from app.Models.user import User
+from app.Models.permission import Permission
 from app.extensions import db
 from app.Mappers.role_mapper import RoleMapper
-
 
 class RoleRepositry():
     
@@ -27,35 +26,32 @@ class RoleRepositry():
         return role
     
     def update_role(self, id, data):
-        dt = self.get_by_id(id)
-        if not dt:
-            return None
-
+        role = self.get_by_id(id)
         for key, value in data.items():
-            setattr(dt, key, value)
+            setattr(role, key, value)
         db.session.commit()
-        return dt
+        return role
     
     def delete_role(self, id):
         role = Role.query.filter_by(id=id).first()
-        if role is None:
-            return None
         db.session.delete(role)
         db.session.commit()
         return role
             
     def assign_permission(self, role_id, perm_id):
-        role = Role.query.filter_by(id=role_id).first()
-        permission = self.get_by_id(perm_id)
+        permission = Permission.query.filter_by(id=perm_id).first()
+        role = self.get_by_id(role_id)
         
-        if role not in permission.roles:
-            permission.roles.append(role)
-            db.session.commit()
-        return RoleMapper.to_dict()
+        permission.set_flags({"isActive":True})
+        if permission not in role.permissions:
+            role.permissions.append(permission) 
+            
+        db.session.commit()
+        return RoleMapper.to_dict(role)
     
     def remove_permission(self, role_id, perm_id):
-        role = Role.query.filter_by(id=role_id).first()
-        permission = self.get_by_id(perm_id)
+        permission = Permission.query.filter_by(id=perm_id).first()
+        role = self.get_by_id(role_id)
         
         if permission in role.permissions:
             role.permissions.remove(permission) 

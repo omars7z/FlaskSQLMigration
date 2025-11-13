@@ -8,13 +8,11 @@ from app.Mappers.user_mapper import UserMapper
 class UserRepositry:
     
     def get_by_id(self, id: int):
-        print(User.query.all())
         return User.query.filter_by(id=id).first()
     
     def get_by_email(self, email):
         return User.query.filter(User.email == email).first()
-    
-    
+     
     def get(self, filters: dict = None):
         filters = filters or {}
         flags_keys = list(User.flags.keys())
@@ -50,7 +48,7 @@ class UserRepositry:
         return user
         
     def delete_user(self, id):
-        user = User.query.filter_by(id=id).first()
+        user = self.get_by_id(id)
         db.session.delete(user)
         db.session.commit()
         return user
@@ -67,26 +65,21 @@ class UserRepositry:
     
     def assign_role(self, user_id, role_id):
         role = Role.query.filter_by(id=role_id).first()
-        user = self.get_by_id(user_id)
-        
-        if not user or not role:
-            # raise ValueError() 
-            return None
+        user = self.get_by_id(user_id)  
+
+        role.set_flags({"isActive": True})
         if role not in user.roles:
             user.roles.append(role)
-            db.session.commit()
-            
-        return UserMapper.to_dict(user)
+
+        db.session.commit()
+        return user
+
     
     def remove_role(self, user_id, role_id):
         role = Role.query.filter_by(id=role_id).first()
         user = self.get_by_id(user_id)
-        if not user or not role:
-            return None
         if role in user.roles:
             user.roles.remove(role) 
-            db.session.commit()
-        else:
-            None
+        db.session.commit()
         return user
         

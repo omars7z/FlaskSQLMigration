@@ -4,6 +4,7 @@ from flask import request, current_app, g
 from sqlalchemy.exc import SQLAlchemyError
 from app.Models.permission import Permission
 from app.Schemas.permission import PermissionSchema
+from app.Mappers.perm_mapper import PermMapper
 
 from app.Decorators.validation import validate_schema
 from app.Decorators.filter_methods import auto_filter_method
@@ -24,15 +25,10 @@ class PermissionsResource(Resource):
             perm = self.service.get_by_id(perm_id)
             if not perm:
                 return error_res(f"Permission with perm_id={perm_id} not found", 404)
-            return suc_res(perm.to_dict(), 200)
+            return suc_res(PermMapper.to_dict(perm), 200)
 
-        perms = self.service.get(filters)
-        if not perms:
-            return error_res([], 404)
-        elif isinstance(perms, list):
-            return suc_res([p.to_dict() for p in perms], 200)
-        else:
-            return error_res(f"invalid json request: {perms}", 400)
+        perms = self.service.get(filters) or []
+        return suc_res(PermMapper.to_list(perms), 200)
 
     @authenticate
     @superadmin_required
