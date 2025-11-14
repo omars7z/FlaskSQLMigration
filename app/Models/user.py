@@ -24,6 +24,8 @@ class User(BaseDBModel):
     time_created: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
     datatypes= relationship("Datatype", back_populates="creator", foreign_keys="[Datatype.creator_id]")
+    files= relationship("File", back_populates="uploader", foreign_keys="[File.uploader_id]")
+    
     roles = relationship("Role", secondary=user_roles, back_populates="users")
     
     def set_password(self, password):

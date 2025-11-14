@@ -1,6 +1,6 @@
 from app.Models.base import BaseDBModel
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Text, Table, Column, Integer, ForeignKey
+from sqlalchemy import Integer, String, Text, Table, Column, Integer
 from app.extensions import db
 from app.Models.relations import user_roles, roles_permissions
 
@@ -18,17 +18,3 @@ class Role(BaseDBModel):
     users = relationship("User", secondary=user_roles, back_populates="roles")
     permissions = relationship("Permission", secondary=roles_permissions, back_populates="roles")
     
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "description": self.description,
-            "permissions": [
-                {
-                    "perm id" : perm.id,
-                    "name" : perm.name,
-                    "resource": perm.resource,
-                    "action": perm.action,
-                } for perm in self.permissions
-            ]
-        }
