@@ -1,0 +1,45 @@
+
+tags:
+  - Files
+summary: Upload a file
+consumes:
+  - multipart/form-data
+parameters:
+  - in: formData
+    name: file
+    type: file
+    required: true
+    description: File to upload (max 16MB)
+responses:
+  201:
+    description: File uploaded successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+              example: File uploaded successfully
+            file:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                filename:
+                  type: string
+                  example: abc123_photo.jpg
+                file_size:
+                  type: integer
+                  example: 1048576
+  400:
+    description: couldn't upload
+
+
+security:
+  - Bearer: []
