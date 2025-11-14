@@ -18,7 +18,7 @@ def init_services(app, repositories: dict):
 
         if None in repo_dict.values():
             missing = [r for r, v in repo_dict.items() if v is None]
-            raise ValueError(f"Repository(ies) '{missing}' not found")
+            print(f"Repository '{missing}' not found")
 
         instance = ServiceClass(repo_dict)
         setattr(app, f"{name.lower()}_service", instance)
