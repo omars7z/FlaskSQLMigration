@@ -41,7 +41,7 @@ class PermissionsResource(Resource):
             perm = self.service.create_permission(**data)
         except SQLAlchemyError as e:
             return error_res(f"Database error: {str(e)}", 500)
-        return suc_res(perm.to_dict(), 201)
+        return suc_res(PermMapper.to_list(perm), 201)
 
     @authenticate
     @superadmin_required

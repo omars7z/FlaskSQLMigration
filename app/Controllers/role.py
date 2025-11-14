@@ -4,6 +4,7 @@ from flask import request, current_app, g
 from sqlalchemy.exc import SQLAlchemyError
 from app.Models.role import Role
 from app.Schemas.role import RoleSchema
+from app.Mappers.role_mapper import RoleMapper
 
 from app.Decorators.validation import validate_schema
 from app.Decorators.filter_methods import auto_filter_method
@@ -21,18 +22,13 @@ class RoleResource(Resource):
     @auto_filter_method(Role)
     def get(self, role_id:int=None, filters=None):
         if role_id is not None:
-            data = self.service.get_by_id(role_id)
-            if not data:
+            role = self.service.get_by_id(role_id)
+            if not role:
                 return error_res(f"User with id={role_id} not found", 404)
-            return suc_res(data.to_dict(), 200)
+            return suc_res(RoleMapper.to_dict(role), 200)
 
-        data = self.service.get(filters)
-        if not data:
-            return error_res([], 404)
-        elif isinstance(data, list):
-            return suc_res([dt.to_dict() for dt in data], 200)
-        else:
-            return error_res(f"invalid json request: {data}", 400)
+        roles = self.service.get(filters) or []
+        return suc_res(RoleMapper.to_list(roles), 200)
     
     
     @authenticate
@@ -42,24 +38,24 @@ class RoleResource(Resource):
         if not data:
             error_res("No data found ", 404)
         try:                
-            dt = self.service.create_role(**data)
+            role = self.service.create_role(**data)
         except PermissionError as e:
             return error_res(str(e), 403)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(dt.to_dict(), 201)
+        return suc_res(RoleMapper.to_dict(role), 201)
     
     @authenticate
     @validate_schema(RoleSchema)
     def put(self, role_id:int):
         data = request.get_json()
         try:
-            dt = self.service.update_role(role_id, data) 
+            role = self.service.update_role(role_id, data) 
         except ValueError as e:
             return error_res(str(e), 401)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(dt.to_dict(), 200)
+        return suc_res(RoleMapper.to_dict(role), 200)
     
     @authenticate
     @superadmin_required
@@ -92,7 +88,7 @@ class RolePermsionsResource(Resource):
             return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(role, 201)
+        return suc_res(RoleMapper.to_dict(role), 201)
     
     @authenticate
     @superadmin_required

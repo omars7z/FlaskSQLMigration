@@ -22,15 +22,13 @@ class UserResource(Resource):
     @auto_filter_method(User)
     def get(self, id=None, filters=None):
         if id is not None:
-            data = self.service.get_by_id(id)
-            if not data:
+            user = self.service.get_by_id(id)
+            if not user:
                 return error_res("User not found", 404)
-            return suc_res(data, 200)
+            return suc_res(UserMapper.to_dict(user), 200)
         
-        data = self.service.get(filters)
-        if not data:
-            return error_res([], 404)
-        return suc_res(data, 200)
+        users = self.service.get(filters) or []
+        return suc_res(UserMapper.to_list(users), 200)
     
     @authenticate
     @superadmin_required
@@ -79,18 +77,18 @@ class UserRoleResource(Resource):
             return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(UserMapper.to_dict(), 201)
+        return suc_res(UserMapper.to_dict(user), 201)
     
     @authenticate
     @superadmin_required
     def delete(self, user_id: int, role_id: int):
         try:
-            role = self.service.remove_role(user_id, role_id)
+            user = self.service.remove_role(user_id, role_id)
         except ValueError as e:
             return error_res(str(e), 404)
         except SQLAlchemyError as e:
             return error_res("Database error: " + str(e), 500)
-        return suc_res(UserMapper.to_dict(), 200)
+        return suc_res(UserMapper.to_dict(user), 200)
 
     
 def register_user_role_routes(api):
