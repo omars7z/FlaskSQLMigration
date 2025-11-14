@@ -11,6 +11,12 @@ from app.Decorators.validation import validate_schema
 from app.Decorators.authentication import authenticate
 from app.Decorators.super_admin import superadmin_required
 
+import os
+from flasgger import swag_from
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+GET_USER = os.path.join(CURRENT_DIR, 'docs', 'users', 'get_user.yml')
+CREATE_USER = os.path.join(CURRENT_DIR, 'docs', 'users', 'create_user.yml')
+DELETE_USER = os.path.join(CURRENT_DIR, 'docs', 'users', 'delete_user.yml')
 
 class UserResource(Resource):
     
@@ -20,6 +26,7 @@ class UserResource(Resource):
     
     @authenticate
     @auto_filter_method(User)
+    @swag_from(GET_USER)
     def get(self, id=None, filters=None):
         if id is not None:
             user = self.service.get_by_id(id)
@@ -32,6 +39,7 @@ class UserResource(Resource):
     
     @authenticate
     @superadmin_required
+    @swag_from(CREATE_USER)
     @validate_schema(UserCreateSchema)
     def post(self):
         validated_user = request.validated_data
@@ -48,6 +56,7 @@ class UserResource(Resource):
        
     @authenticate
     @superadmin_required   
+    @swag_from(DELETE_USER)
     def delete(self, id: int):
         try:
             user = self.service.delete_user(id)  

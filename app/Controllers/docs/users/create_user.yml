@@ -1,0 +1,58 @@
+tags:
+  - Users
+
+summary: Create a new user
+description: >
+  Only superadmins can create users.  
+  Returns created user and token to set password
+
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: "Omar"
+        email:
+          type: string
+          example: "omar@example.com"
+
+responses:
+  201:
+    description: User created successfully
+    schema:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: "User created"
+            token:
+              type: string
+              example: "efk;s4ioj4iuiofnds2"
+
+  403:
+    description: Permission denied
+    schema:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+          example: "Permission denied"
+
+security:
+  - Bearer: []

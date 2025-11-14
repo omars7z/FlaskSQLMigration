@@ -5,12 +5,16 @@ from app.Schemas.password import SetPasswordSchema
 from app.Util.response import suc_res, error_res
 from app.Decorators.validation import validate_schema
 
-from app.Decorators.authentication import authenticate
-
 from app.Util.jwt_token import create_access_token, create_refresh_token, decode_refresh_token
 from app.Models.user import User
 
 from flask import current_app, request, g
+
+import os
+from flasgger import swag_from
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+LOGIN = os.path.join(CURRENT_DIR, 'docs', 'auth', 'login.yml')
+SET_PASS = os.path.join(CURRENT_DIR, 'docs', 'auth', 'set_password.yml')
 
 class LoginResource(Resource):
     
@@ -18,6 +22,7 @@ class LoginResource(Resource):
     def service(self):
         return current_app.auth_service
     
+    @swag_from(LOGIN)
     @validate_schema(LoginSchema)
     def post(self):
         validated_data = request.validated_data
@@ -30,7 +35,7 @@ class LoginResource(Resource):
         access_token = create_access_token(user)
         refresh_token = create_refresh_token(user)
         
-        return suc_res({"msg": "Login successfully", "access_token": access_token, "refresh_token": refresh_token, }, 200)    
+        return suc_res({"msg": "Login successfully", "access_token": access_token, "refresh_token": refresh_token}, 200)    
 
 def register_auth_routes(api):
     api.add_resource(LoginResource, '/login')
@@ -42,7 +47,6 @@ class RefreshResource(Resource):
     def service(self):
         return current_app.auth_service
     
-    # @authenticate
     def post(self):
         auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
@@ -72,7 +76,6 @@ def register_refresh_routes(api):
         # middleware will only check access token
         # refresh token will be executed if the access token were expired and the refresh token still valid -> /refresh
 
-
     
 class SetPasswordResource(Resource):
     
@@ -80,6 +83,7 @@ class SetPasswordResource(Resource):
     def service(self):
         return current_app.auth_service
     
+    @swag_from(SET_PASS)
     @validate_schema(SetPasswordSchema)
     def post(self):
         data = request.validated_data 
