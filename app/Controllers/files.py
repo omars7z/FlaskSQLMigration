@@ -8,7 +8,15 @@ from app.Mappers.file_mapper import FileMapper
 from app.Decorators.filter_methods import auto_filter_method
 from app.Util.response import suc_res, error_res
 from app.Decorators.authentication import authenticate
-from app.Decorators.super_admin import superadmin_required
+
+import os
+from flasgger import swag_from
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+GET_FILE = os.path.join(CURRENT_DIR, 'docs', 'files', 'get_file.yml')
+UPLOAD = os.path.join(CURRENT_DIR, 'docs', 'files', 'upload.yml')
+DELETE = os.path.join(CURRENT_DIR, 'docs', 'files', 'delete.yml')
+DOWNLOAD = os.path.join(CURRENT_DIR, 'docs', 'files', 'download.yml')
+# all_DOCS = os.path.join(CURRENT_DIR, 'docs', 'files', 'all.yml')
 
 class FileResource(Resource):
     
@@ -17,6 +25,7 @@ class FileResource(Resource):
         return current_app.file_service
 
     # @authenticate
+    @swag_from(GET_FILE)
     @auto_filter_method(File)
     def get(self, file_id=None, filters=None):        
         
@@ -32,6 +41,7 @@ class FileResource(Resource):
         return suc_res(FileMapper.to_list(files), 200)
     
     @authenticate 
+    @swag_from(UPLOAD)
     def post(self):
         try:
             
@@ -57,7 +67,8 @@ class FileResource(Resource):
         return suc_res(FileMapper.to_dict(dt), 200)
     
     
-    # @authenticate
+    @authenticate
+    @swag_from(DELETE)
     def delete(self, file_id : str):
         try:                
             self.service.delete(file_id)
@@ -67,7 +78,7 @@ class FileResource(Resource):
             return error_res("Database error: " + str(e), 500)
         return suc_res(f"Deleted file id: {file_id}", 200)
     
-def register_routes(api):
+def register_file_routes(api):
     api.add_resource(FileResource, '/file', '/file/<string:file_id>')
     
     
@@ -76,22 +87,13 @@ class FileDownloadResource(Resource):
     def service(self):
         return current_app.file_service
     
-    @authenticate
-    def get(self, id: int):
-        current_user = g.current_user
-        
-        file = self.service.get_by_id(id)
-        file_path = self.service.get_file_path(id)
-        if not file or not file_path:
-            return error_res("File not found on server", 404)
-        
+    @swag_from(DOWNLOAD)
+    def get(self, file_id: str):
         try:
-            '''return send_file(
-                file_path,
-                mimetype=file.mime_type,
-                as_attachment=True,
-                download_name=file.original_filename
-            )'''
-            pass
+            return self.service.download_file(file_id)
         except Exception as e:
             return error_res(f"Error downloading file: {str(e)}", 500)
+        
+def register_download_routes(api):
+    api.add_resource(FileDownloadResource, '/download_file/<string:file_id>')
+    

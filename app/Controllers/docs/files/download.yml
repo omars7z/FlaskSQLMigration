@@ -1,0 +1,39 @@
+tags:
+  - Files
+
+summary: Download a file
+description: Retrieve a file stored on the server using its unique ID
+             Depending on file type, it may display in browser or be downloaded
+
+parameters:
+  - in: path
+    name: file_id
+    type: string
+    required: true
+    description: ID of file to download
+
+responses:
+  200:
+    description: File successfully downloaded
+    schema:
+      type: file
+    headers:
+      Content-Disposition:
+        type: string
+        description: Suggests filename for browser download
+        example: attachment; filename="example.pdf"
+
+  404:
+    description: File not found
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        data:
+          type: string
+          example: File not found on server
+
+security:
+  - Bearer: []

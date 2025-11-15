@@ -1,0 +1,144 @@
+swagger: "2.0"
+info:
+  title: Role Management API
+  version: 1.0.0
+basePath: /api
+schemes:
+  - http
+  - https
+
+tags:
+  - name: Roles
+    description: Role management 
+    
+parameters:
+  - id: int
+    in: int
+    required: true
+    schema:
+      type: object
+
+paths:
+  /role:
+    get:
+      tags:
+        - Roles
+      summary: Get all roles
+      description: Retrieve all roles with optional filtering
+      parameters:
+        - name: filters
+          in: query
+          type: string
+          required: false
+          description: Dynamic filters, e.g., ?name=Admin
+          example: name=Admin
+      responses:
+        200:
+          description: List of roles
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: array
+                items:
+                  $ref: "#/definitions/Role"
+
+    post:
+      tags:
+        - Roles
+      summary: Create a new role
+      description: Add a role to the system
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Role"
+      responses:
+        201:
+          description: Role created successfully
+          schema:
+            $ref: "#/definitions/Role"
+        403:
+          description: Permission denied
+        500:
+          description: Database error
+
+  /role/{role_id}:
+    get:
+      tags:
+        - Roles
+      summary: Get a role by ID
+      parameters:
+        - name: role_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the role to retrieve
+          example: 1
+      responses:
+        200:
+          description: Role found
+          schema:
+            $ref: "#/definitions/Role"
+        404:
+          description: Role not found
+
+    put:
+      tags:
+        - Roles
+      summary: Update a role
+      parameters:
+        - name: role_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the role to update
+          example: 1
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/Role"
+      responses:
+        200:
+          description: Role updated successfully
+          schema:
+            $ref: "#/definitions/Role"
+        401:
+          description: Invalid data
+        500:
+          description: Database error
+
+    delete:
+      tags:
+        - Roles
+      summary: Delete a role
+      parameters:
+        - name: role_id
+          in: path
+          type: integer
+          required: true
+          description: ID of the role to delete
+          example: 1
+      responses:
+        200:
+          description: Role deleted successfully
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: string
+                example: Deleted role id
+        403:
+          description: Permission denied
+        500:
+          description: Database error
+security:
+  - Bearer: []

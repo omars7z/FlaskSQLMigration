@@ -1,0 +1,48 @@
+tags:
+  - Files
+
+summary: Get files
+description: Retrieve a list of files or a single file by ID.
+
+parameters:
+  - in: path
+    name: file_id
+    type: string
+    required: false
+    description: ID of the file to fetch (optional)
+
+responses:
+  200:
+    description: File(s) retrieved successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            files:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  filename:
+                    type: string
+                  file_size:
+                    type: integer
+
+  404:
+    description: File not found
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "File not found"

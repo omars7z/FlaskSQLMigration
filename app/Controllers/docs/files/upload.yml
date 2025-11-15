@@ -1,15 +1,19 @@
-
 tags:
   - Files
+
 summary: Upload a file
+description: Upload a single file (max 16MB) to the server.
+
 consumes:
   - multipart/form-data
+
 parameters:
   - in: formData
     name: file
     type: file
     required: true
     description: File to upload (max 16MB)
+
 responses:
   201:
     description: File uploaded successfully
@@ -29,17 +33,26 @@ responses:
               type: object
               properties:
                 id:
-                  type: integer
-                  example: 1
+                  type: string
+                  example: "fnke4kj2frs"
                 filename:
                   type: string
-                  example: abc123_photo.jpg
+                  example: "abc123_photo.jpg"
                 file_size:
                   type: integer
                   example: 1048576
-  400:
-    description: couldn't upload
 
+  400:
+    description: Couldn't upload the file
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "File size too large or invalid file type"
 
 security:
   - Bearer: []
