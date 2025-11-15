@@ -1,0 +1,29 @@
+tags:
+  - Permissions
+summary: Delete a permission
+description: Delete a permission by ID. Superadmin required.
+parameters:
+  - name: perm_id
+    in: path
+    type: integer
+    required: true
+    description: ID of the permission to delete
+responses:
+  200:
+    description: Permission deleted successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: string
+          example: "Deleted permission id: 1"
+  404:
+    description: Permission not found
+  500:
+    description: Database error
+
+security:
+  - Bearer : []

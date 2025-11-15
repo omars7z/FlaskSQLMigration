@@ -1,0 +1,33 @@
+tags:
+  - Permissions
+summary: Create a permission
+description: Create a new permission. Only superadmins can create permissions.
+consumes:
+  - application/json
+parameters:
+  - name: body
+    in: body
+    required: true
+    schema:
+      $ref: "#/definitions/Permission"
+responses:
+  201:
+    description: Permission created successfully
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: "#/definitions/Permission"
+  400:
+    description: Invalid input
+  401:
+    description: Unauthorized
+  500:
+    description: Database error
+
+
+security:
+  - Bearer : []

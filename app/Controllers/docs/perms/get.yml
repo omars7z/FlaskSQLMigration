@@ -1,0 +1,53 @@
+tags:
+  Permissions
+
+summary:
+  Get permisssion
+description: Retrieve all permissions or a single permission by ID
+
+paramarters:
+  name: perm_id
+  in: path
+  type: integer
+  required: false
+
+responses:
+  200:
+    description: successful get request
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id: 
+                type: integer 
+                example: 1
+              name:
+                type: string 
+                example: read
+              description:
+                type: string
+                example: "Allows reading user info"
+
+  404:
+    description: Permission not found
+    schema:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        data:
+          type: string
+          example: "Permission with perm_id=1 not found"
+  500:
+    description: Internal server error
+
+security:
+  - Bearer : []

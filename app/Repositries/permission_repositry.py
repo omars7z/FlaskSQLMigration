@@ -12,8 +12,8 @@ class PermissionRepositry:
 
         for key, val in filters.items():
             if hasattr(Permission, key):
-                v = getattr(Permission, key)
-                query = query.filter(v == val)
+                col = getattr(Permission, key)
+                query = query.filter(col == val)
                 
         return query.all()
         

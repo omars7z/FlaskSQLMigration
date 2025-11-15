@@ -12,6 +12,14 @@ from app.Util.response import suc_res, error_res
 from app.Decorators.authentication import authenticate
 from app.Decorators.super_admin import superadmin_required
 
+import os
+from flasgger import swag_from
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+GET = os.path.join(CURRENT_DIR, 'docs', 'perms', 'get.yml')
+POST = os.path.join(CURRENT_DIR, 'docs', 'perms', 'post.yml')
+PUT = os.path.join(CURRENT_DIR, 'docs', 'perms', 'put.yml')
+DELETE = os.path.join(CURRENT_DIR, 'docs', 'perms', 'delete.yml')
+
 class PermissionsResource(Resource):
     
     @property
@@ -20,6 +28,7 @@ class PermissionsResource(Resource):
 
     @authenticate
     @auto_filter_method(Permission)
+    @swag_from(GET)
     def get(self, perm_id=None, filters=None):
         if perm_id is not None:
             perm = self.service.get_by_id(perm_id)
@@ -33,6 +42,7 @@ class PermissionsResource(Resource):
     @authenticate
     @superadmin_required
     @validate_schema(PermissionSchema)
+    @swag_from(POST)
     def post(self):
         data = request.get_json()
         if not data:
@@ -46,6 +56,7 @@ class PermissionsResource(Resource):
     @authenticate
     @superadmin_required
     @validate_schema(PermissionSchema)
+    @swag_from(PUT)
     def put(self, perm_id: int):        
         data = request.get_json()
         try:
@@ -58,6 +69,7 @@ class PermissionsResource(Resource):
 
     @authenticate
     @superadmin_required
+    @swag_from(DELETE)
     def delete(self, perm_id: int):
         try:
             self.service.delete_permission(perm_id)
