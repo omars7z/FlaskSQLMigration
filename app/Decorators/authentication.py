@@ -1,29 +1,27 @@
 from functools import wraps
 from flask import g, request
 from app.Util.response import error_res
-from app.Util.jwt_token import decode_access_token
+from app.Util.jwt_token import create_access_token, decode_access_token
 from app.Models.user import User
-
-#JWT Token authorization
 
 def authenticate(f):
     @wraps(f)
-    def decorated(*args, **kwargs):
-        
-        auth_header = request.headers.get("Authorization") #AAuthorization Berear: fuihreoafoieug32j4n545...
+    def wrapper(*args, **kwargs):
+        auth_header = request.headers.get("Authorization")
         if not auth_header or not auth_header.startswith("Bearer "):
-            return error_res("missing or wrong auth header", 401)
+            return error_res("Missing or wrong auth header", 401)
         
-        bearer = auth_header.split(" ")[1]
-        user_id = decode_access_token(bearer)
-        if not user_id :
-            return error_res("Invalid or rxpired token", 401)
+        token = auth_header.split(" ")[1]
+        user_id = decode_access_token(token)
+        if not user_id:
+            return error_res("Invalid or expired token", 401)
         
         user = User.query.get(user_id)
         if not user or not user.to_dict_flags().get("isActive"):
-            return error_res("wrong user or is inactive", 401)
+            return error_res("Wrong user or inactive", 401)
         
         g.current_user = user
-            
+
         return f(*args, **kwargs)
-    return decorated
+    return wrapper
+
