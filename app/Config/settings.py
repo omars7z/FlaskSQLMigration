@@ -14,11 +14,12 @@ class Config:
     SECRET_REFRESH_KEY = os.getenv("SECRET_REFRESH_KEY")
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER")
+    # JWT_ACCESS_EXPIRES = int(os.getenv("JWT_ACCESS_EXPIRES", 900))  # 15min
+    # JWT_REFRESH_EXPIRES = int(os.getenv("JWT_REFRESH_EXPIRES", 86400))  # 1 day
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
-
 
 class ProductionConfig(Config):
     DEBUG = False

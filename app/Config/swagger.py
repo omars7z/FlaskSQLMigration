@@ -16,7 +16,7 @@ swagger_config = {
 swagger_template = {
     "swagger": "2.0",
     "info": {
-        "title": "MigrationApp API",
+        "title": "Flask Migration API",
         "version": "1.0.0"
     },
     "securityDefinitions": {

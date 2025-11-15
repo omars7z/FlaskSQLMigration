@@ -20,4 +20,5 @@ users.register_user_role_routes(api)
 permissions.register_perm_routes(api)
 role.register_role_perm_routes(api)
 
-files.register_routes(api)
+files.register_file_routes(api)
+files.register_download_routes(api)
