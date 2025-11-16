@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import g, request
 from app.Util.response import error_res
-from app.Util.jwt_token import create_access_token, decode_access_token
+from app.Util.jwt_token import decode_access_token
 from app.Models.user import User
 
 def authenticate(f):

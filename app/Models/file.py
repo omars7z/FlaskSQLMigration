@@ -1,5 +1,4 @@
 from app.Models.base import BaseDBModel
-from typing import Optional
 from sqlalchemy import Integer, String, DateTime, BigInteger, Text, UUID, ForeignKey
 from datetime import datetime
 

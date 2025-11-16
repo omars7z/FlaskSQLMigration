@@ -34,3 +34,6 @@ responses:
     description: File not found.
   500:
     description: Database error.
+
+security:
+  - Bearer: []

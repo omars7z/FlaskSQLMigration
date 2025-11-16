@@ -1,0 +1,33 @@
+tags:
+  - Authentication
+summary: Refresh Access Token
+description: >
+  Generates a new access token using a valid refresh token.
+  Send refresh token in the Authorization header.
+parameters:
+  - name: Authorization
+    in: header
+    required: true
+    description: "Bearer <refresh_token>"
+    schema:
+      type: string
+      example: "Bearer eyJhbGc"
+responses:
+  200:
+    description: Access token refreshed successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            msg:
+              type: string
+              example: "Access token refreshed"
+            access_token:
+              type: string
+  401:
+    description: Missing or invalid refresh token
+    
+  404:
+    description: Refresh token expired or invalid
+    

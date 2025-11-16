@@ -1,7 +1,6 @@
-import os 
-from pathlib import Path
+import uuid
 
-class FileConfig:
+class FileConfig:       #not meant to be instantiated
     
     MAX_FILE_SIZE = 2 * 1024 * 1024
     
@@ -13,23 +12,23 @@ class FileConfig:
     ] 
     ALLOWED_MIMES = {
         'image/png', 'image/jpeg', 'image/gif', 'image/webp',
-        'application/pdf', 'application/msword', 'text/plain'
-        'text/csv', 'text/x-python', 'application/javascript', 
+        'application/pdf', 'application/msword', 'text/plain',
+        'text/csv', 'text/x-python', 'application/javascript',
         'text/html', 'text/css', 'application/json'
-    }
+}
     
-    @staticmethod  #not meant to be instantiated
+    @staticmethod  
     def allowed_file(filename):
-        if '.' in filename:
+        if '.' not in filename:
             return False
-        ext = filename.rsplit('.', 1)[1].lower()
+        ext = filename.rsplit('.', 1)[-1].lower()
         return ext in FileConfig.ALLOWED_EXTENSIONS
     
     @staticmethod
-    def allowed_mime():
-        pass
+    def allowed_mime(mime: str):
+        return mime in FileConfig.ALLOWED_MIMES
     
     @staticmethod
-    def _generate_name(file):
-        if '.' in file.filename:
-            pass
+    def _generate_name(filename):
+        ext = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+        return f"{uuid.uuid4()}.{ext}"

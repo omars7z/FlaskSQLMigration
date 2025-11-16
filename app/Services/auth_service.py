@@ -1,5 +1,4 @@
 
-from app.Util.jwt_token import create_access_token
 from app.Helpers.registry import register
 
 @register("Auth", repo="User")
@@ -8,16 +7,15 @@ class AuthService:
     def __init__(self, repository):
         self.repo = repository.get("User")
         
-    def login(self, email, password):
+    def login(self, email: str, password: str):
         user = self.repo.get_by_email(email)
         if not user:
-            return None
-        validated_password = user.check_password(password)
-        if not validated_password:
-            return None 
+            raise ValueError("User not found")
+        if not user.check_password(password):
+            raise ValueError("Incorrect password")
         if not user.to_dict_flags().get("isActive"):
-            return None
-        return create_access_token(user, 20)
+            raise ValueError("User account is inactive")
+        return user
     
     def set_password(self, token, password):
         user = self.repo.set_password(token, password)

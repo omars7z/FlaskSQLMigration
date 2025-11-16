@@ -1,15 +1,22 @@
 tags:
-  Permissions
+ - Permissions
 
-summary:
-  Get permisssion
+summary: Get permisssion
 description: Retrieve all permissions or a single permission by ID
 
-paramarters:
-  name: perm_id
-  in: path
-  type: integer
-  required: false
+parameters:
+  - name: id
+    in: path
+    required: false
+    type: integer
+    description: ID of the perm to retrieve
+
+  - name: 
+    in: query
+    required: false
+    type: string
+    description: Dynamic filters based on Perm model fields.  
+      
 
 responses:
   200:

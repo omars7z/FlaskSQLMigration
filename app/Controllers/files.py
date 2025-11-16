@@ -24,7 +24,7 @@ class FileResource(Resource):
     def service(self):
         return current_app.file_service
 
-    # @authenticate
+    @authenticate
     @swag_from(GET_FILE)
     @auto_filter_method(File)
     def get(self, file_id=None, filters=None):        

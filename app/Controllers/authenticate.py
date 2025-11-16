@@ -1,41 +1,47 @@
 from flask_restful import Resource
+from flask import current_app, request, g
 from app.Schemas.login import LoginSchema
 from app.Schemas.password import SetPasswordSchema
 
 from app.Util.response import suc_res, error_res
 from app.Decorators.validation import validate_schema
-
-from app.Util.jwt_token import create_access_token, create_refresh_token, decode_refresh_token
-from app.Models.user import User
-
-from flask import current_app, request, g
+from app.Decorators.refresh_jwt import refresh_jwt
+from app.Util.jwt_token import create_access_token, create_refresh_token
 
 import os
 from flasgger import swag_from
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 LOGIN = os.path.join(CURRENT_DIR, 'docs', 'auth', 'login.yml')
 SET_PASS = os.path.join(CURRENT_DIR, 'docs', 'auth', 'set_password.yml')
+REFRESH = os.path.join(CURRENT_DIR, "docs", "auth", "refresh.yml")
+
 
 class LoginResource(Resource):
-    
+
     @property
     def service(self):
         return current_app.auth_service
-    
+
     @swag_from(LOGIN)
     @validate_schema(LoginSchema)
     def post(self):
-        validated_data = request.validated_data
-        email = validated_data["email"]
-        password = validated_data["password"]
-        user = self.service.login(email, password)
-        if not user:
-            return error_res("Wrong credentials", 404)
-        
-        access_token = create_access_token(user)
-        refresh_token = create_refresh_token(user)
-        
-        return suc_res({"msg": "Login successfully", "access_token": access_token, "refresh_token": refresh_token}, 200)    
+        try:
+            data = request.validated_data
+            user = self.service.login(data["email"], data["password"])
+            access_token = create_access_token(user)
+            refresh_token = create_refresh_token(user)
+
+            return suc_res({
+                "msg": "Login successful",
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }, 200)
+
+        except ValueError as e:
+            return error_res(str(e), 400)
+        except Exception as e:
+            return error_res(f"Internal server error: {str(e)}", 500)
+
 
 def register_auth_routes(api):
     api.add_resource(LoginResource, '/login')
@@ -47,34 +53,17 @@ class RefreshResource(Resource):
     def service(self):
         return current_app.auth_service
     
+    @refresh_jwt
+    @swag_from(REFRESH)
     def post(self):
-        auth_header = request.headers.get("Authorization")
-        if not auth_header or not auth_header.startswith("Bearer "):
-            return error_res("Missing or wrong auth header", 401)
-
-        token = auth_header.split(" ")[1]
-        user_id = decode_refresh_token(token)
-
-        if not user_id:
-            return error_res("Wrong or expired refresh token", 404)
-        
-        user = User.query.get(user_id)
-        # current_user = g.current_user
-        # user = User.query.get(current_user)
-        # ✅ Now user is a real object with `.id`
-        new_access_token = create_access_token(user)
+        new_access_token = create_access_token(g.current_user)
         return suc_res({
-            "msg": " refreshed tokenn",
-            "access_token": new_access_token
+            "msg": "Refreshed tokenn",
+            "new_access_token": new_access_token
         }, 200)
         
 def register_refresh_routes(api):
     api.add_resource(RefreshResource, '/refresh')
-    
-    
-        # generate both access and refresh token in /login
-        # middleware will only check access token
-        # refresh token will be executed if the access token were expired and the refresh token still valid -> /refresh
 
     
 class SetPasswordResource(Resource):
