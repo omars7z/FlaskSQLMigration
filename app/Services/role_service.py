@@ -23,7 +23,7 @@ class RoleServices:
     
     def delete_role(self, role_id: int):
         if not self.role.get_by_id(role_id):
-            raise ValueError("cant delete role")
+            raise ValueError(f"Role id {role_id} not found")
         return self.role.delete_role(role_id)
     
     def assign_permission(self, role_id, perm_id):
@@ -33,5 +33,5 @@ class RoleServices:
     
     def remove_permission(self, role_id, perm_id):
         if not self.role.get_by_id(role_id) or not self.perm.get_by_id(perm_id):  
-            raise ValueError("Couldn't assign role_id or perm_id")
+            raise ValueError("Couldn't remove role_id or perm_id")
         return self.role.remove_permission(role_id, perm_id)

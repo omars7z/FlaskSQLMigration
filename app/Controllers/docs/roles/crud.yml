@@ -9,14 +9,7 @@ schemes:
 
 tags:
   - name: Roles
-    description: Role management 
-    
-parameters:
-  - id: int
-    in: int
-    required: true
-    schema:
-      type: object
+    description: Role management endpoints
 
 paths:
   /role:
@@ -24,7 +17,6 @@ paths:
       tags:
         - Roles
       summary: Get all roles
-      description: Retrieve all roles with optional filtering
       parameters:
         - name: filters
           in: query
@@ -49,8 +41,9 @@ paths:
     post:
       tags:
         - Roles
-      summary: Create a new role
-      description: Add a role to the system
+      summary: Create a role
+      consumes:
+        - application/json
       parameters:
         - in: body
           name: body
@@ -62,10 +55,6 @@ paths:
           description: Role created successfully
           schema:
             $ref: "#/definitions/Role"
-        403:
-          description: Permission denied
-        500:
-          description: Database error
 
   /role/{role_id}:
     get:
@@ -77,27 +66,23 @@ paths:
           in: path
           type: integer
           required: true
-          description: ID of the role to retrieve
-          example: 1
       responses:
         200:
           description: Role found
           schema:
             $ref: "#/definitions/Role"
-        404:
-          description: Role not found
 
     put:
       tags:
         - Roles
       summary: Update a role
+      consumes:
+        - application/json
       parameters:
         - name: role_id
           in: path
           type: integer
           required: true
-          description: ID of the role to update
-          example: 1
         - in: body
           name: body
           required: true
@@ -108,10 +93,6 @@ paths:
           description: Role updated successfully
           schema:
             $ref: "#/definitions/Role"
-        401:
-          description: Invalid data
-        500:
-          description: Database error
 
     delete:
       tags:
@@ -122,8 +103,6 @@ paths:
           in: path
           type: integer
           required: true
-          description: ID of the role to delete
-          example: 1
       responses:
         200:
           description: Role deleted successfully
@@ -136,9 +115,31 @@ paths:
               data:
                 type: string
                 example: Deleted role id
-        403:
-          description: Permission denied
-        500:
-          description: Database error
+
+definitions:
+  Role:
+    type: object
+    required:
+      - name
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: Admin
+      permissions:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 7
+            name:
+              type: string
+              example: user:read
+
+
 security:
   - Bearer: []

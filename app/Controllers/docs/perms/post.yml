@@ -10,6 +10,11 @@ parameters:
     required: true
     schema:
       $ref: "#/definitions/Permission"
+      example:
+            name: " "
+            resource: " "
+            action: " "
+            description: " "
 responses:
   201:
     description: Permission created successfully
