@@ -3,7 +3,6 @@ import secrets
 from sqlalchemy import func
 from app.Models.user import User
 from app.Models.role import Role
-from app.Mappers.user_mapper import UserMapper
 
 class UserRepositry:
     
