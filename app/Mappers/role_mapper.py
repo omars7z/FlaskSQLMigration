@@ -9,6 +9,8 @@ class RoleMapper:
         return {
             "id": role.id,
             "name": role.name,
+            "flags": role.to_dict_flags(),
+            "flag": role.flag,
             "description": role.description,
             "permissions": [
                 {

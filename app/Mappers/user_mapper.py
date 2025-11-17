@@ -29,6 +29,16 @@ class UserMapper:
                 }
                 for role in user.roles
             ],
+            "files": [
+                {
+                    "id": str(f.id),
+                    "filename": f.filename,
+                    "mime_type": f.mime_type,
+                    "file_path": f.file_path,
+                    "file_size": f.file_size,
+                }
+                for f in user.files
+            ]
         }
 
     @staticmethod
