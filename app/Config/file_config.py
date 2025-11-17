@@ -1,8 +1,7 @@
-import uuid
 
 class FileConfig:       #not meant to be instantiated
     
-    MAX_FILE_SIZE = 2 * 1024 * 1024
+    MAX_FILE_SIZE = 4 * 1024 * 1024
     
     ALLOWED_EXTENSIONS = [
         'jgp', 'png','jpeg', 'gif', 'webp', 'svg',
@@ -28,7 +27,3 @@ class FileConfig:       #not meant to be instantiated
     def allowed_mime(mime: str):
         return mime in FileConfig.ALLOWED_MIMES
     
-    @staticmethod
-    def _generate_name(filename):
-        ext = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
-        return f"{uuid.uuid4()}.{ext}"
