@@ -1,50 +1,45 @@
-
 import jwt
 from datetime import datetime, timedelta, timezone
 from flask import current_app
 
-idle = 1
 
-def create_access_token(user, refresh_time=1):
+def _generate_token(payload, secret_key):
+    return jwt.encode(payload, secret_key, algorithm="HS256")
+
+def _decode_token(token, secret_key):
+    try:
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+
+        if payload.get("expiry") < int(datetime.now(timezone.utc).timestamp()):
+            return None
+        return payload
+
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        return None
+
+
+def create_access_token(user, minutes=50):
     payload = {
-        "user_id" : user.id,
-        "user_email" : user.email,
-        "expiry" : int((datetime.now(timezone.utc) + timedelta(minutes=refresh_time)).timestamp()) #datetime(2025, 11, 3, 8, 0, 0 + timezone.utc+10mins) -> timestamp(float) -> int
+        "user_id": user.id,
+        "user_email": user.email,
+        "expiry": int((datetime.now(timezone.utc) + timedelta(minutes=minutes)).timestamp())
     }
-    
-    token = jwt.encode(payload, current_app.config["SECRET_KEY"], algorithm="HS256") #header.payload.signature
-    return token
+    return _generate_token(payload, current_app.config["SECRET_KEY"])
+
+
+def create_refresh_token(user, days=1):
+    payload = {
+        "user_id": user.id,
+        "expiry": int((datetime.now(timezone.utc) + timedelta(days=days)).timestamp())
+    }
+    return _generate_token(payload, current_app.config["SECRET_REFRESH_KEY"])
+
 
 def decode_access_token(token):
-        try:
-            payload = jwt.decode(
-                token,
-                current_app.config["SECRET_KEY"],
-                algorithms=["HS256"]  
-            )
-            if payload["expiry"] < int(datetime.now(timezone.utc).timestamp()):
-                return None
-            return payload["user_id"]
-        except jwt.ExpiredSignatureError:
-            return None
-        except jwt.InvalidTokenError:
-            return None
-        
-'''
-Built it decorator that 
-@jwt_required()
-def get(self):
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    return suc_res({"user": user.name})
-    
-Reads the Authorization header (Bearer <token>)
-Validates the signature and expiry
-Handles errors with proper JSON responses
-Lets you define custom callbacks (e.g. user lookup, role check)
+    payload = _decode_token(token, current_app.config["SECRET_KEY"])
+    return payload["user_id"] if payload else None
 
-can be put in custom decorator
-@active_user_required
-def get(self):
-    return suc_res({"user": g.current_user.name})
-    '''
+
+def decode_refresh_token(token):
+    payload = _decode_token(token, current_app.config["SECRET_REFRESH_KEY"])
+    return payload["user_id"] if payload else None
