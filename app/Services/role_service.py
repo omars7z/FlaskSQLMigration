@@ -1,37 +1,46 @@
 from app.Helpers.registry import register
 
 @register("Role", repo=("Role", "Permission"))
-class RoleServices:
-    
+class RoleService:
+
     def __init__(self, repository):
-        self.role = repository.get("Role")
-        self.perm = repository.get("Permission")
-    
-    def get_by_id(self, id: int):
-        return self.role.get_by_id(id)
-    
+        self.role_repo = repository.get("Role")
+        self.perm_repo = repository.get("Permission")
+
+    def get_by_id(self, role_id: int):
+        role = self.role_repo.get_by_id(role_id)
+        if not role:
+            return False
+        return role
+
     def get(self, filters: dict = None):
-        return self.role.get(filters)
-    
+        return self.role_repo.get(filters)
+
     def create_role(self, **kwargs):
-        return self.role.create_role(**kwargs)
-    
-    def update_role(self, id: int, data: dict):
-        if not self.role.get_by_id(id):
-            raise ValueError(f"role id {id} not found")
-        return self.role.update_role(id, data)
-    
-    def delete_role(self, role_id: int):
-        if not self.role.get_by_id(role_id):
+        return self.role_repo.create_role(**kwargs)
+
+    def update_role(self, role_id: int, data: dict):
+        if not self.role_repo.get_by_id(role_id):
             raise ValueError(f"Role id {role_id} not found")
-        return self.role.delete_role(role_id)
-    
-    def assign_permission(self, role_id, perm_id):
-        if not self.role.get_by_id(role_id) or not self.perm.get_by_id(perm_id): 
-            raise ValueError("No role_id or perm assigned ")
-        return self.role.assign_permission(role_id, perm_id)
-    
-    def remove_permission(self, role_id, perm_id):
-        if not self.role.get_by_id(role_id) or not self.perm.get_by_id(perm_id):  
-            raise ValueError("Couldn't remove role_id or perm_id")
-        return self.role.remove_permission(role_id, perm_id)
+        return self.role_repo.update_role(role_id, data)
+
+    def delete_role(self, role_id: int):
+        if not self.role_repo.get_by_id(role_id):
+            raise ValueError(f"Role id {role_id} not found")
+        return self.role_repo.delete_role(role_id)
+
+
+    def assign_permission(self, role_id: int, perm_id: int):
+        role = self.role_repo.get_by_id(role_id)
+        perm = self.perm_repo.get_by_id(perm_id)
+        if not role or not perm:
+            raise ValueError("Role or permission not found")
+        return self.role_repo.assign_permission(role_id, perm_id)
+
+
+    def remove_permission(self, role_id: int, perm_id: int):
+        role = self.role_repo.get_by_id(role_id)
+        perm = self.perm_repo.get_by_id(perm_id)
+        if not role or not perm:
+            raise ValueError("Role or permission not found")
+        return self.role_repo.remove_permission(role_id, perm_id)

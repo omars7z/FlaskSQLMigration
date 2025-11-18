@@ -1,39 +1,24 @@
 from app.extensions import db
 import secrets
-from sqlalchemy import func
+from sqlalchemy.orm import selectinload
 from app.Models.user import User
 from app.Models.role import Role
 
 class UserRepositry:
     
     def get_by_id(self, id: int):
-        return User.query.filter_by(id=id).first()
+        return User.query.get(id)
     
     def get_by_email(self, email):
         return User.query.filter(User.email == email).first()
      
     def get(self, filters: dict = None):
-        filters = filters or {}
-        flags_keys = list(User.flags.keys())
-        query = User.query.filter()  # skip deleted
-
-        for key, val in filters.items():
-            if hasattr(User, key):
-                col = getattr(User, key)
-
-                if key == "name":
-                    query = query.filter(func.lower(col) == val.lower())
-                else:
-                    query = query.filter(col == val)
-
-            elif key in User.flags:
-                bit_val = 1 << flags_keys.index(key)
-                if val:
-                    query = query.filter((User.flag.op('&')(bit_val)) == bit_val)
-                else:
-                    query = query.filter((User.flag.op('&')(bit_val)) == 0)
-
-        return query.all()        
+        query = User.query.options(
+            selectinload(User.roles).selectinload(Role.permissions),
+            selectinload(User.files)
+            )
+        query = User.apply_filters(query, filters)
+        return query.all()      
     
     def create_user(self, name, email):
         token = secrets.token_urlsafe(32)
@@ -63,7 +48,7 @@ class UserRepositry:
         return user 
     
     def assign_role(self, user_id, role_id):
-        role = Role.query.filter_by(id=role_id).first()
+        role = Role.query.get(role_id)
         user = self.get_by_id(user_id)  
 
         role.set_flags({"isActive": True})
@@ -75,7 +60,7 @@ class UserRepositry:
 
     
     def remove_role(self, user_id, role_id):
-        role = Role.query.filter_by(id=role_id).first()
+        role = Role.query.get(role_id)
         user = self.get_by_id(user_id)
         if role in user.roles:
             user.roles.remove(role) 

@@ -1,7 +1,6 @@
 from app.Models.base import BaseDBModel
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Text, Table, Column, Integer
-from app.extensions import db
+from sqlalchemy import Integer, String, Text, Table, Integer
 from app.Models.relations import user_roles, roles_permissions
 
 class Role(BaseDBModel):

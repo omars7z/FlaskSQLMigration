@@ -4,17 +4,11 @@ from app.extensions import db
 class PermissionRepositry:
     
     def get_by_id(self, id):
-        return Permission.query.filter_by(id=id).first() #first_or_404
+        return Permission.query.get(id)
     
-    def get(self, filters:dict = None):       
-        filters = filters or {}
+    def get(self, filters:dict = None):    
         query = Permission.query
-
-        for key, val in filters.items():
-            if hasattr(Permission, key):
-                col = getattr(Permission, key)
-                query = query.filter(col == val)
-                
+        query = Permission.apply_filters(query, filters)
         return query.all()
         
     def create_permission(self, **kwargs):
@@ -31,7 +25,7 @@ class PermissionRepositry:
         return perm
     
     def delete_permission(self, id):
-        permission = Permission.query.filter_by(id=id).first()
+        permission = Permission.query.get(id)
         db.session.delete(permission)
         db.session.commit()
         return permission

@@ -7,33 +7,11 @@ from app.Repositries.base_repositry import BaseRepositry
 class DatatypeRepositry(BaseRepositry):
     
     def get_by_id(self, id):
-        dt = Datatype.query.filter_by(id=id).first()
-        if dt and dt.to_dict_flags().get("isDeleted"):
-            return None
-        return dt
-        
+        return Datatype.query.get(id)
         
     def get(self, filters: dict = None):
-        filters = filters or {}
-        flags_keys = list(Datatype.flags.keys())
         query = Datatype.query.filter(Datatype.flag.op('&')(16) == 0)  # skip deleted
-
-        for key, val in filters.items():
-            if hasattr(Datatype, key):
-                col = getattr(Datatype, key)
-
-                if key == "name":
-                    query = query.filter(func.lower(col) == val.lower())
-                else:
-                    query = query.filter(col == val)
-
-            elif key in Datatype.flags:
-                bit_val = 1 << flags_keys.index(key)
-                if val:
-                    query = query.filter((Datatype.flag.op('&')(bit_val)) == bit_val)
-                else:
-                    query = query.filter((Datatype.flag.op('&')(bit_val)) == 0)
-
+        query = Datatype.apply_filters(query, filters)
         return query.all()            
 
 
@@ -41,15 +19,14 @@ class DatatypeRepositry(BaseRepositry):
         # take flags from input or use defaults
         flag_fields = {k: data.pop(k, Datatype.flags[k]) for k in Datatype.flags.keys()}
         
-        dt = Datatype(**data)  # destructure abd set name, example, ...
+        dt = Datatype(**data)
         dt.set_flags(flag_fields)
         db.session.add(dt)
         db.session.commit()
         return dt
 
     def update(self, dt, data: dict):
-
-        flag_fields = {k: data.pop(k) for k in list(data.keys()) if k in Datatype.flags}
+        flag_fields = {k: data[k] for k in Datatype.flags if k in data}
         if flag_fields:
             dt.set_flags(flag_fields)
 

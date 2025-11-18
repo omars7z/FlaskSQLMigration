@@ -1,8 +1,45 @@
 from ..extensions import db
-
+from sqlalchemy import inspect
+from sqlalchemy import String, func
+ 
 # mixin class
 class BaseDBModel(db.Model):
     __abstract__ = True  # dont create a table 
+
+    def cast_value(self, column, value):
+        try:
+            python_type = column.type.python_type
+            if python_type is bool:
+                return str(value).lower() in ["1", "true", "yes"]
+            return python_type(value)
+        except Exception:
+            return value
+
+    @classmethod
+    def apply_filters(cls, query, filters: dict):
+        if not filters:
+            return query
+
+        mapper = inspect(cls)
+
+        for key, val in filters.items():
+
+            if key in getattr(cls, "flags", {}):
+                bit_val = 1 << list(cls.flags.keys()).index(key)
+                val_bool = str(val).lower() in ["1", "true", "yes"]
+                query = query.filter((cls.flag.op("&")(bit_val)) == (bit_val if val_bool else 0))
+                continue
+
+            col = mapper.columns[key]
+
+            if isinstance(col.type, String):
+                query = query.filter(func.lower(col) == str(val).lower())
+            else:
+                casted_val = cls().cast_value(col, val)
+                query = query.filter(col == casted_val)
+
+        return query
+
     
     def get_flag(self) -> int:
         return getattr(self, "flag", 0) or 0
