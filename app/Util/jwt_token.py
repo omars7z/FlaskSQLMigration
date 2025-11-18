@@ -18,11 +18,11 @@ def _decode_token(token, secret_key):
         return None
 
 
-def create_access_token(user, minutes=50):
+def create_access_token(user):
     payload = {
         "user_id": user.id,
         "user_email": user.email,
-        "expiry": int((datetime.now(timezone.utc) + timedelta(minutes=minutes)).timestamp())
+        "expiry": int((datetime.now(timezone.utc) + timedelta(hours=2)).timestamp())
     }
     return _generate_token(payload, current_app.config["SECRET_KEY"])
 
