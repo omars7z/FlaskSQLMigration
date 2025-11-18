@@ -1,5 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
 import logging
+from flask_sqlalchemy import SQLAlchemy
 
 #Lazy singleton
 db = SQLAlchemy()

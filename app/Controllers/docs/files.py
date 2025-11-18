@@ -124,34 +124,6 @@ FILE_DELETE = {
 
 
 
-UPDATE = {
-    "tags": ["Files"],
-    "summary": "Update file metadata",
-    "description": "Updates the metadata of a file, such as name or fields stored in DB.",
-    "parameters": [
-        {
-            "name": "file_id",
-            "in": "path",
-            "required": True,
-            "schema": {"type": "string"},
-        }
-    ],
-    "requestBody": {
-        "required": True,
-        "content": {
-            "application/json": {
-                "example": {
-                    "filename": "new_name.jpg"
-                }
-            }
-        }
-    },
-    "responses": {
-        200: {"description": "File updated"},
-        500: {"description": "Database or server error"}
-    }
-}
-
 DOWNLOAD = {
     "tags": ["Files"],
     "summary": "Download file",
@@ -175,5 +147,45 @@ DOWNLOAD = {
         },
         404: {"description": "File not found"},
         500: {"description": "Error downloading file"}
+    }
+}
+
+
+TEXT = {
+    'tags': ['PDF'],
+    'summary': 'Convert text to PDF',
+    'consumes': ['application/json'],
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'text': {
+                        'type': 'string',
+                        'description': 'Text content to convert to PDF'
+                    }
+                },
+                'required': ['text']
+            }
+        }
+    ],
+    'responses': {
+        200: {
+            'description': 'PDF file',
+            'content': {
+                'application/pdf': {
+                    'schema': {
+                        'type': 'string',
+                        'format': 'binary'
+                    }
+                }
+            }
+        },
+        400: {
+            'description': 'Text not provided'
+        }
     }
 }

@@ -1,12 +1,22 @@
+from io import BytesIO
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import NotFound
 from app.Helpers.registry import register
 from app.Config.file_config import FileConfig
 from flask import current_app, send_file
-import os, mimetypes, uuid
 
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+
+import os, mimetypes, uuid
 from pathlib import Path
+import re
 
 @register("File", repo="File")
 class FileService:
@@ -84,9 +94,6 @@ class FileService:
         )
 
     
-    def update(self, id: str, data: dict):
-        return self.repo.update(id, data)
-    
     def delete(self, file_id: str):
         file_record = self.get_by_id(file_id)
         if not file_record:
@@ -98,3 +105,38 @@ class FileService:
             os.remove(file_path)
         
         return self.repo.delete(file_record)
+
+    def upload_text(self, text: str):
+        pdf_buffer = BytesIO()
+
+        doc = SimpleDocTemplate(
+            pdf_buffer,
+            pagesize=A4,
+            leftMargin=20*mm,
+            rightMargin=20*mm,
+            topMargin=20*mm,
+            bottomMargin=20*mm
+        )
+
+        styles = getSampleStyleSheet()
+        style = styles["Normal"]
+
+        txt = []
+
+        # Split into paragraphs by double newlines
+        paragraphs = text.strip().split("\n")
+
+        for para in paragraphs:
+            # Let reportlab auto wrap words normally
+            txt.append(Paragraph(para, style))
+            txt.append(Spacer(1, 12))
+
+        doc.build(txt)
+        pdf_buffer.seek(0)
+
+        return send_file(
+            pdf_buffer,
+            as_attachment=True,
+            download_name="content.pdf",
+            mimetype="application/pdf"
+        )

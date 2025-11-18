@@ -8,6 +8,9 @@ class DatatypeService:
         self.repo = repository.get("Datatype")
     
     def get_by_id(self, id):
+        dt = self.repo.get_by_id(id)
+        if dt and dt.to_dict_flags().get("isDeleted"):
+            return None
         return self.repo.get_by_id(id)
     
     def get(self, filters):

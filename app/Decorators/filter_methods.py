@@ -8,25 +8,31 @@ def auto_filter_method(model):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            
             filters = {}
-            query = model.query
-            args_dict = request.args.to_dict()
-            
-            for key, val in list(args_dict.items()):
-                if hasattr(model, key):
-                    v = getattr(model, key)
-                    query = query.filter(v==val)
-                    filters[key] = val
-                    
-                elif hasattr(model, "flags") and key in model.flags:
-                        filters[key] = val.lower() == "true"
-                else:
-                    return error_res(f"invalide params: {key}", 400)
+
+            raw_filters = request.args.get("filters", "")
+            if raw_filters:
+
                 
-            kwargs['filters'] = filters
+                if "," in raw_filters:
+                    pairs = raw_filters.split(",")
+                else:
+                    pairs = raw_filters.split("&")
+
+                for pair in pairs:
+                    if "=" not in pair:
+                        return error_res(f"Invalid filter format: {pair}", 400)
+
+                    key, val = pair.split("=", 1)
+                    key = key.strip()
+                    val = val.strip()
+
+                    if hasattr(model, key):
+                        filters[key] = val
+                    else:
+                        return error_res(f"Invalid filter field: {key}", 400)
+
+            kwargs["filters"] = filters
             return func(*args, **kwargs)
-                    
         return wrapper
     return decorator
-                    
