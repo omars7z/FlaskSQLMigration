@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os, sys
 from dotenv import load_dotenv
 
@@ -14,9 +15,10 @@ class Config:
     SECRET_REFRESH_KEY = os.getenv("SECRET_REFRESH_KEY")
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER")
-    # JWT_ACCESS_EXPIRES = int(os.getenv("JWT_ACCESS_EXPIRES", 900))  # 15min
-    # JWT_REFRESH_EXPIRES = int(os.getenv("JWT_REFRESH_EXPIRES", 86400))  # 1 day
-
+    JWT_TOKEN_TIME = timedelta(hours=int(os.getenv("JWT_TOKEN_TIME", 1)))
+    COOKIE_NAME = "access_token"
+    COOKIE_HTTP = True
+    COOKIE_SECURE = True
 
 class DevelopmentConfig(Config):
     DEBUG = True

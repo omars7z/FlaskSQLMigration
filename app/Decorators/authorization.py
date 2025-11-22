@@ -6,23 +6,22 @@ def access_required(resource: str=None , action: str=None , roles: list[str]= No
     def wrapper(f):
         @wraps(f)
         def decorator(*args, **kwargs):
-            user = g.current_user
+            user = getattr(g, "current_user_id", None)
+            user_roles = getattr(g, "current_roles", [])
+            user_permissions = getattr(g, "current_permissions", [])
             if not user:
                 return error_res("Not unauthenticated ", 401)
             
-            user_role_name = [role.name for role in user.roles]  #if role (that has permission)
-            if roles and any(r in user_role_name for r in roles):
-                return f(*args **kwargs)
+            if roles and any(r in user_roles for r in roles):
+                return f(*args, **kwargs)
         
             if resource and action:
-                user_permissions = user.get_permissions()
-            
-            valid = any(
-                perm.resource==resource and perm.action==action
+                valid = any(
+                perm.get("resource") and perm.get("action")
                 for perm in user_permissions
                 )
-            if valid:
-                return f(*args, **kwargs)
+                if valid:
+                    return f(*args, **kwargs)
             
             return error_res("user doesn't have permission to this action ", 403)
         return decorator
