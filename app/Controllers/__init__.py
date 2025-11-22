@@ -11,8 +11,6 @@ datatype.register_routes(api)
 users.register_user_routes(api)
 
 authenticate.register_auth_routes(api)
-authenticate.register_password_routes(api)
-authenticate.register_refresh_routes(api)
 
 role.register_role_routes(api)
 permissions.register_perm_routes(api)

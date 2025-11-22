@@ -1,6 +1,6 @@
 from app.extensions import db
 import secrets
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 from app.Models.user import User
 from app.Models.role import Role
 
@@ -14,9 +14,10 @@ class UserRepositry:
      
     def get(self, filters: dict = None):
         query = User.query.options(
-            selectinload(User.roles).selectinload(Role.permissions),
-            selectinload(User.files)
-            )
+            joinedload(User.roles).joinedload(Role.permissions),
+            joinedload(User.files)
+        )
+
         query = User.apply_filters(query, filters)
         return query.all()      
     

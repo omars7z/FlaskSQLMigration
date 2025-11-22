@@ -15,6 +15,5 @@ class UserCreateSchema(Schema):
     
     @validates('name')
     def validate_name(self, value,  **kwargs):
-        """Validate name"""
         if not value.strip():
             raise ValidationError("Name cannot be empty")
