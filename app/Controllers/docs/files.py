@@ -152,7 +152,7 @@ DOWNLOAD = {
 
 
 TEXT = {
-    'tags': ['PDF'],
+    'tags': ['Files'],
     'summary': 'Convert text to PDF',
     'consumes': ['application/json'],
     'parameters': [
@@ -187,5 +187,6 @@ TEXT = {
         400: {
             'description': 'Text not provided'
         }
-    }
+    },  
+    'security': [{'Bearer': []}]
 }

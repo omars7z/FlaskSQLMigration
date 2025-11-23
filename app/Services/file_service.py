@@ -10,6 +10,8 @@ from werkzeug.exceptions import NotFound
 from app.Helpers.registry import register
 from app.Util.file import FileUtil
 from fpdf import FPDF
+from docx import Document
+from docx.shared import Pt, Inches
 
 
 @register("File", repo="File")
@@ -90,73 +92,107 @@ class FileService:
 
         return self.repo.create(file_data)
 
+
     def upload_text(self, text, uploader_id: int):
+        from docx.shared import Pt
+        from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+        from docx.oxml.ns import qn
+        from docx.oxml import OxmlElement
         if not text:
             raise ValueError("No text provided")
 
-        # if string, split to paragraphs, if list use, if not exception
+        # Split into paragraphs
         if isinstance(text, str):
-            paragraphs = text.split("\n\n")
+            paragraphs = text.split("\n\n")  # Double newline for paragraph breaks
         elif isinstance(text, list):
             paragraphs = text
         else:
             raise ValueError("Input must be a string or a list of paragraphs")
 
-        pdf = FPDF(format='A4', unit='mm')
-        pdf.add_page()
-        pdf.set_auto_page_break(auto=True, margin=20)
+        doc = Document()
 
-        arabic_font = os.path.join(current_app.root_path, "Fonts", "NotoNaskhArabic-Regular.ttf")
-        if not os.path.exists(arabic_font):
-            raise FileNotFoundError(f"Arabic font missing at: {arabic_font}")
-
-        pdf.add_font("NotoArabic", "", arabic_font, uni=True)
-        pdf.set_font("NotoArabic", size=12)
-
-        page_width = pdf.w - 2 * pdf.l_margin
-        left_margin = pdf.l_margin
-        right_margin = pdf.r_margin
-
-        for para in paragraphs:
-            if not para.strip(): #if empty move down
-                pdf.ln(6)
+        for para_text in paragraphs:
+            if not para_text.strip():
+                doc.add_paragraph("")
                 continue
 
-            lines = para.split("\n")
+            # Split by single newlines for lines within paragraph
+            lines = para_text.split("\n")
+            
             for line in lines:
                 if not line.strip():
-                    pdf.ln(6)
+                    doc.add_paragraph("")
                     continue
 
                 indent = FileUtil.count_leading_spaces(line)
                 content = line.lstrip()
 
-                if FileUtil.is_arabic(content):
-                    content = FileUtil.reshape_arabic(content)
-                    pdf.set_left_margin(left_margin)
-                    pdf.set_right_margin(right_margin + indent * 2)
-                    pdf.multi_cell(page_width - indent * 2, 6, content, align='R')
+                # Detect if text is Arabic
+                is_arabic = FileUtil.is_arabic(content)
+                
+
+                # Create paragraph and run
+                p = doc.add_paragraph()
+                run = p.add_run()
+
+                if is_arabic:
+                    # Use original text WITHOUT reshaping for Word
+                    # Word handles Arabic rendering natively
+                    run.text = content
+                    
+                    # Set font to one that supports Arabic
+                    run.font.name = 'Arial'
+                    
+                    # Also set complex script font
+                    rPr = run._element.get_or_add_rPr()
+                    rFonts = rPr.get_or_add_rFonts()
+                    rFonts.set(qn('w:ascii'), 'Arial')
+                    rFonts.set(qn('w:hAnsi'), 'Arial')
+                    rFonts.set(qn('w:cs'), 'Arial')
+                    
+                    # Enable RTL (right-to-left) at paragraph level
+                    pPr = p._element.get_or_add_pPr()
+                    
+                    # Set bidi (bidirectional) property
+                    bidi_elem = OxmlElement('w:bidi')
+                    bidi_elem.set(qn('w:val'), '1')
+                    pPr.append(bidi_elem)
+                    
+                    # Set text direction to RTL
+                    textDirection = OxmlElement('w:textDirection')
+                    textDirection.set(qn('w:val'), 'rl')
+                    pPr.append(textDirection)
+                    
+                    
+                    # Set RTL property at run level too
+                    rtl_elem = OxmlElement('w:rtl')
+                    rPr.append(rtl_elem)
+                    
+                    print(f"Set as Arabic with RTL")
                 else:
-                    pdf.set_left_margin(left_margin + indent * 2)
-                    pdf.set_right_margin(right_margin)
-                    pdf.multi_cell(page_width - indent * 2, 6, content, align='L')
+                    run.text = content
+                    p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+                    
+                # Apply indentation
+                if indent > 0:
+                    p.paragraph_format.left_indent = Pt(indent * 2)
 
-            pdf.ln(4)
-
+        # Save DOCX
         upload_folder = current_app.config['UPLOAD_FOLDER']
         os.makedirs(upload_folder, exist_ok=True)
-        id = str(uuid.uuid4())
-        filename = f"{id}.pdf"
+        file_id = str(uuid.uuid4())
+        filename = f"{file_id}.docx"
         full_path = os.path.join(upload_folder, filename)
-
-        pdf.set_left_margin(left_margin)
-        pdf.set_right_margin(right_margin)
-        pdf.output(full_path)
+        
+        print(f"\n--- Saving document ---")
+        print(f"Path: {full_path}")
+        
+        doc.save(full_path)
 
         file_data = {
-            "id": id,
+            "id": file_id,
             "filename": filename,
-            "mime_type": "application/pdf",
+            "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "file_path": full_path,
             "file_size": os.path.getsize(full_path),
             "uploader_id": uploader_id
