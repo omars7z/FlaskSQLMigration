@@ -8,8 +8,15 @@ flask-sqlalchemy~=3.1.1
 python-dotenv==1.0.1
 redis[hiredis]~=6.1.0
 sqlalchemy~=2.0.29
-uvicorn
-psycopg-binary
+psycopg2[binary]
 alembic
 pyjwt
 werkzeug~=3.1.3 
+flasgger
+marshmallow
+marshmallow-sqlalchemy
+asgiref
+uvicorn
+arabic-reshaper
+python-bidi
+python-docx

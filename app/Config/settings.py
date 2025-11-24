@@ -2,7 +2,7 @@ from datetime import timedelta
 import os, sys
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=".env")
 
 VALID_ENVS = ["Development", "Production"]
 FLASK_ENV = os.getenv("FLASK_ENV")
@@ -28,7 +28,8 @@ class ProductionConfig(Config):
 
 
 def get_config():
-    if FLASK_ENV == "Development"or"Dev":
+    if FLASK_ENV in ("Development", "Dev"):
         return DevelopmentConfig
-    elif FLASK_ENV == "Production"or"Config":
-        return ProductionConfig
+    elif FLASK_ENV in ("Production", "Prod"):
+            return ProductionConfig
+
