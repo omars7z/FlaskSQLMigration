@@ -5,10 +5,11 @@ from app.Models.datatype import Datatype
 class DatatypeSchema(Schema):
     
     id = fields.Int(dump_only=True)
-    name = fields.String(required=True, validate=lambda x: len(x) <= 50)
+    name = fields.String(required=False, validate=lambda x: len(x) <= 50)
     example = fields.Dict(required=False, allow_none=True)
     creator_id = fields.Integer(required=False, allow_none=True)
     
+    flags = fields.Dict(required=False)
     cantBeDeleted = fields.Boolean(required=False)
     canDoMathOperation = fields.Boolean(required=False)
     canDoLogicalOperation = fields.Boolean(required=False)
@@ -56,7 +57,8 @@ class DatatypeSchema(Schema):
 
         # validate flags and example 
         for flag, pattern in flag_checks.items():
-            flag_val = data.get(flag, False)
+            flags = data.get("flags", {})
+            flag_val = flags.get(flag, False)
             matching_pattern = any(re.search(pattern, txt) for txt in txts)
 
             if flag_val and not matching_pattern:

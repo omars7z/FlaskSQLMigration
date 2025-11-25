@@ -113,7 +113,7 @@ USER_ROLE = {
             "description": "ID of the user"
         },
         {
-            "name": "perm_id",
+            "name": "role_id",
             "in": "path",
             "type": "integer",
             "required": True,

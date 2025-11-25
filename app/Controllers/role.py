@@ -12,6 +12,7 @@ from app.Decorators.validation import validate_schema
 from app.Decorators.filter_methods import auto_filter_method
 from app.Decorators.authentication import authenticate
 from app.Decorators.super_admin import superadmin_required
+from app.Decorators.authorization import access_required
 
 from app.Controllers.docs.roles import ROLE_ALL, ROLE_CREATE, ROLE_ID, ROLE_PERMISSION
 
@@ -34,6 +35,7 @@ class RoleResource(Resource):
 
     @authenticate
     @validate_schema(RoleSchema)
+    @access_required(resource="role", action="create")
     @swag_from(ROLE_CREATE)
     def post(self):
         try:

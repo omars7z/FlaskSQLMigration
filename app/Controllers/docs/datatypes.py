@@ -73,8 +73,30 @@ DATATYPE_CREATE = {
             'schema': {
                 'type': 'object',
                 'properties': {
-                    'name': {'type': 'string', 'example': 'NewDatatype'},
-                    'description': {'type': 'string', 'example': 'Description of datatype'}
+                    'name': {'type': 'string', 'example': 'haha'},
+                    'example': {
+                        'type': 'object',
+                        'example': {
+                            'logic': 'and',
+                            'idk': 'for'
+                        }
+                    },
+                    'flags': {
+                        'type': 'object',
+                        'properties': {
+                            'cantBeDeleted': {'type': 'boolean'},
+                            'canDoMathOperation': {'type': 'boolean'},
+                            'canDoLogicalOperation': {'type': 'boolean'},
+                            'isIterable': {'type': 'boolean'},
+                            'isDeleted': {'type': 'boolean'}
+                        },
+                        'example': {
+                            "cantBeDeleted": False,
+                            "canDoMathOperation": False,
+                            "canDoLogicalOperation": True,
+                            "isIterable": True,
+                        }
+                    }
                 },
                 'required': ['name']
             }
@@ -83,6 +105,62 @@ DATATYPE_CREATE = {
     'responses': {
         '201': {'description': 'Datatype created successfully'},
         '400': {'description': 'Invalid input'},
+        '500': {'description': 'Database error'}
+    },
+    'security': [{'Bearer': []}]
+}
+DATATYPE_PUT = {
+    'tags': ['Datatypes'],
+    'summary': 'Get, update, or delete a datatype by ID',
+    'description': 'Retrieve, update, or delete a specific datatype by its ID',
+    'parameters': [
+        {
+            'name': 'id',
+            'in': 'path',
+            'type': 'integer',
+            'required': True,
+            'description': 'ID of the datatype'
+        },
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': False,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'name': {'type': 'string', 'example': 'haha'},
+                    'example': {
+                        'type': 'object',
+                        'example': {
+                            'logic': 'and',
+                            'idk': 'for'
+                        }
+                    },
+                    'flags': {
+                        'type': 'object',
+                        'properties': {
+                            'cantBeDeleted': {'type': 'boolean'},
+                            'canDoMathOperation': {'type': 'boolean'},
+                            'canDoLogicalOperation': {'type': 'boolean'},
+                            'isIterable': {'type': 'boolean'},
+                            'isDeleted': {'type': 'boolean'}
+                        },
+                        'example': {
+                            "cantBeDeleted": False,
+                            "canDoMathOperation": False,
+                            "canDoLogicalOperation": True,
+                            "   ": True,
+                        }
+                    }
+                }
+            },
+            'description': 'JSON body for updating the datatype (used only in PUT)'
+        }
+    ],
+    'responses': {
+        '200': {'description': 'Datatype retrieved, updated, or deleted successfully'},
+        '400': {'description': 'Invalid JSON request'},
+        '404': {'description': 'Datatype not found'},
         '500': {'description': 'Database error'}
     },
     'security': [{'Bearer': []}]

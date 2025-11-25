@@ -22,8 +22,9 @@ class DatatypeService:
     def update(self, id, data: dict):
         dt = self.get_by_id(id)
         if not dt:
-            return ValueError(f"datatype id {id} not found")
-        return self.repo.update(dt, data)  
+            raise ValueError(f"datatype id {id} not found")
+        updated = self.repo.update(dt, data)
+        return updated
 
     def delete(self, id):
         dt = self.repo.get_by_id(id)
@@ -31,7 +32,7 @@ class DatatypeService:
             raise ValueError(f"Datatype with id={id} not found")
         if dt.get_flag() & 1:
             raise ValueError("Cannot delete protected datatype (flag=1)")
-        if dt.creator_id != g.current_user.id:
+        if dt.creator_id != g.current_user_id:
             raise PermissionError("You are not allowed to delete this datatype")
 
         self.repo.delete(dt)
