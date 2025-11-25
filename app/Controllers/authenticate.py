@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from flask import current_app, request, g, make_response
+from app.Decorators.rate_limit import rate_limit
 from app.Schemas.login import LoginSchema
 from app.Schemas.password import SetPasswordSchema
 
@@ -23,6 +24,7 @@ class LoginResource(Resource):
 
     @swag_from(LOGIN)
     @validate_schema(LoginSchema)
+    @rate_limit(5, 60)
     def post(self):
         try:
             data = request.validated_data
@@ -42,6 +44,7 @@ class LoginResource(Resource):
         except ValueError as e:
             return error_res(str(e), 400)
         except Exception as e:
+            print(e)
             return error_res(f"Internal server error: {str(e)}", 500)
 
     
