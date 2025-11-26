@@ -1,27 +1,33 @@
 import jwt
 from datetime import datetime, timedelta, timezone
-from flask import current_app
+from flask import current_app, g
 
-def create_access_token(user):
-    if isinstance(user, int):   
-        user = current_app.user_service.get_by_id(user) #change to current_app.config["user_id"]
-
-    expire = datetime.now(timezone.utc) + current_app.config["JWT_TOKEN_TIME"]    
+def create_access_token(user_or_payload):
+    if isinstance(user_or_payload, dict):
+        payload_data = user_or_payload
+        user_id = payload_data.get("user_id")
+        roles = payload_data.get("roles", [])
+        permissions = payload_data.get("permissions", [])
+        flags = payload_data.get("flags", {})
+    else:
+        # It's a user object
+        user = user_or_payload
+        user_id = user.id
+        roles = [role.name for role in user.roles]
+        permissions = [{"resource": p.resource, "action": p.action} for p in user.get_permissions()]
+        flags = user.to_dict_flags()
     
-    permissions = user.get_permissions()
-    permissions_list = [{"resource":perm.resource, "action":perm.action} for perm in permissions]
-    roles = [role.name for role in user.roles]
-    flags = user.to_dict_flags()
+    expire = datetime.now(timezone.utc) + current_app.config["JWT_TOKEN_TIME"]
     
     payload = {
-        "user_id": user.id,
+        "user_id": user_id,
         "role" : roles,
-        "permissions" : permissions_list,
+        "permissions" : permissions,
         "flags":flags,
         "exp": expire,
         "iat": datetime.now(timezone.utc)
     }
-    
+    print(payload)
     token = jwt.encode(
         payload,
         current_app.config['SECRET_KEY'],
@@ -30,7 +36,6 @@ def create_access_token(user):
     return token
 
 def decode_access_token(token):
-    """Decode and validate access token"""
     try:
         payload = jwt.decode(
             token,
@@ -43,11 +48,3 @@ def decode_access_token(token):
     except jwt.InvalidTokenError:
         return None
 
-def get_token_expiry(token):
-    payload = jwt.decode(
-        token,
-        current_app.config['SECRET_KEY'],
-        algorithms=["HS256"],
-        options={"verify_exp": False}
-    )
-    return payload.get("exp")
