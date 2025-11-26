@@ -10,23 +10,32 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: flaskmig
-      # POSTGRES_USER: ${POSTGRES_USER}
-      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      # POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis_server
+    networks:
+      - migration_net
+    command: ["redis-server", "--save", "20", "1", "--loglevel", "warning"]
 
   web:
     build: .
     container_name: migration_app
     networks:
       - migration_net
-    environment:
-      DATABASE_URL: postgresql+psycopg2://postgres:1234@migration_db:5432/flaskmig
     ports:
       - "8000:8000"
     depends_on:
       - db
+      - redis
+    env_file:
+      - .env
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
 
 volumes:
   pgdata:

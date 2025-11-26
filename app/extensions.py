@@ -9,9 +9,10 @@ logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)
 
 
-def eager_relationship(*args, **kwargs):
+def set_relationship(*args, **kwargs):
     if "lazy" not in kwargs:
-        kwargs["lazy"] = "joined"  #eager load
+        kwargs["lazy"] = "noload"  #set loading tyep
     return sa_relationship(*args, **kwargs)
 
-sqlalchemy.orm.relationship = eager_relationship
+sqlalchemy.orm.relationship = set_relationship
+#by default it will retrieve only the record of the model and i can manuly get their relatoinship

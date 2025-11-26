@@ -19,5 +19,9 @@ def get_redis_connection():
         db=db,
         decode_responses=True
     )
+    try:
+        _redis_instance.ping()
+    except redis.ConnectionError as e:
+        raise ConnectionError(f"Cannot connect to Redis at {host}:{port} -> {e}")
 
     return _redis_instance

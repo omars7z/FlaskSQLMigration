@@ -23,6 +23,8 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
 
+
+
 def get_config():
     VALID_ENVS = ["Development", "Production"]
     FLASK_ENV = os.getenv("FLASK_ENV")
