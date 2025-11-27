@@ -14,7 +14,7 @@ from app.Decorators.authentication import authenticate
 from app.Decorators.super_admin import superadmin_required
 from app.Decorators.authorization import access_required
 
-from app.Controllers.docs.roles import ROLE_ALL, ROLE_CREATE, ROLE_ID, ROLE_PERMISSION
+from app.docs.roles import ROLE_ALL, ROLE_CREATE, ROLE_ID, ROLE_PERMISSION
 
 
 class RoleResource(Resource):

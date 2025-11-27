@@ -7,13 +7,14 @@ from app.Schemas.password import SetPasswordSchema
 from app.Util.cookies import set_access_cookie
 from app.Util.response import suc_res, error_res
 from app.Decorators.validation import validate_schema
-from app.Util.jwt_token import create_access_token
+from app.Util.jwt_token import create_access_token, user_to_payload
 
 import os
 from flasgger import swag_from
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-LOGIN = os.path.join(CURRENT_DIR, 'docs', 'auth', 'login.yml')
-SET_PASS = os.path.join(CURRENT_DIR, 'docs', 'auth', 'set_password.yml')
+CONTROLLER_DIR = os.path.dirname(os.path.abspath(__file__))
+APP_DIR = os.path.dirname(CONTROLLER_DIR)
+LOGIN = os.path.join(APP_DIR, 'docs', 'auth', 'login.yml')
+SET_PASS = os.path.join(APP_DIR, 'docs', 'auth', 'set_password.yml')
 
 
 class LoginResource(Resource):
@@ -29,7 +30,9 @@ class LoginResource(Resource):
         try:
             data = request.validated_data
             user = self.service.login(data["email"], data["password"])
-            access_token = create_access_token(user)
+            
+            user_payload = user_to_payload(user)
+            access_token = create_access_token(user_payload)
 
             response_data = {
                 "msg": "Login successful",

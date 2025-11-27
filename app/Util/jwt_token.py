@@ -2,20 +2,21 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from flask import current_app, g
 
-def create_access_token(user_or_payload):
-    if isinstance(user_or_payload, dict):
-        payload_data = user_or_payload
-        user_id = payload_data.get("user_id")
-        roles = payload_data.get("roles", [])
-        permissions = payload_data.get("permissions", [])
-        flags = payload_data.get("flags", {})
-    else:
-        # It's a user object
-        user = user_or_payload
-        user_id = user.id
-        roles = [role.name for role in user.roles]
-        permissions = [{"resource": p.resource, "action": p.action} for p in user.get_permissions()]
-        flags = user.to_dict_flags()
+def user_to_payload(user):
+    return {
+        "user_id": user.id,
+        "roles": [role.name for role in user.roles],
+        "permissions": [{"resource": p.resource, "action": p.action} for p in user.get_permissions()],
+        "flags": user.to_dict_flags()
+    }
+
+
+def create_access_token(payload_data):
+    
+    user_id = payload_data.get("user_id")
+    roles = payload_data.get("roles", [])
+    permissions = payload_data.get("permissions", [])
+    flags = payload_data.get("flags", {})
     
     expire = datetime.now(timezone.utc) + current_app.config["JWT_TOKEN_TIME"]
     

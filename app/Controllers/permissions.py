@@ -13,7 +13,7 @@ from app.Decorators.filter_methods import auto_filter_method
 from app.Decorators.authentication import authenticate
 from app.Decorators.super_admin import superadmin_required
 
-from app.Controllers.docs.permissions import PERM_ALL, PERM_ID, PERM_CREATE
+from app.docs.permissions import PERM_ALL, PERM_ID, PERM_CREATE
 
 
 class PermissionResource(Resource):

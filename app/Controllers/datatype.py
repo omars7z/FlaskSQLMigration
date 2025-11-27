@@ -14,7 +14,7 @@ from app.Decorators.authentication import authenticate
 from app.Decorators.authorization import access_required
 
 from flasgger import swag_from
-from app.Controllers.docs.datatypes import (DATATYPE_COLLECTION, DATATYPE_ITEM, DATATYPE_CREATE, DATATYPE_PUT)
+from app.docs.datatypes import (DATATYPE_COLLECTION, DATATYPE_ITEM, DATATYPE_CREATE, DATATYPE_PUT)
 
 class DatatypeResource(Resource):
     @property
